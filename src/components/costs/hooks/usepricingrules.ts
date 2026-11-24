@@ -1,8 +1,6 @@
-// hooks/usepricingrules.ts
-
 import { supabase } from "@/integrations/supabase/client";
 
-const SCHEMA = "newsystem";
+const SCHEMA = "public";
 
 export type RuleScope = "global" | "store" | "channel" | "product" | "brand";
 
@@ -404,7 +402,7 @@ export function loadDistinctChannels(): Promise<string[]> {
 }
 
 /**
- * Lista as marcas distintas cadastradas em `newsystem.costs` (coluna "Mark"),
+ * Lista as marcas distintas cadastradas em `public.costs` (coluna "Mark"),
  * usada para popular o seletor de "Restringir por marca" no campo Desconto
  * do modal de ajustes em massa.
  */
@@ -461,7 +459,7 @@ export function invalidateMarketplaceRuleCache(channel?: string) {
  * — sejam elas globais (listing_type_rules, indexadas por pricing_mode) ou
  * específicas de cada marca (brand_rules[].classico/premium, presentes
  * quando pricing_mode === "brand"). Persistidas em
- * newsystem.marketplace_channel_rules — NÃO alteram current_cost, apenas
+ * public.marketplace_channel_rules — NÃO alteram current_cost, apenas
  * compõem o preço exibido/enviado ao canal.
  *
  * Com cache por `channel` — evita requisições duplicadas quando múltiplos

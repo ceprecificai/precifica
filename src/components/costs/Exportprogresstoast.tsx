@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, X, Loader2 } from "lucide-react";
+import { CheckCircle, X, SpinnerGap } from "@phosphor-icons/react";
 
 type Props = {
   open: boolean;
@@ -37,9 +37,16 @@ export default function ExportProgressToast({
       <div className="flex items-start gap-3">
         <div className="mt-0.5 shrink-0">
           {done ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+            <CheckCircle
+              size={20}
+              weight="fill"
+              className="text-emerald-500"
+            />
           ) : (
-            <Loader2 className="h-5 w-5 animate-spin text-[#1a8ceb]" />
+            <SpinnerGap
+              size={20}
+              className="animate-spin text-[var(--accent-blue)]"
+            />
           )}
         </div>
 
@@ -54,7 +61,7 @@ export default function ExportProgressToast({
 
           <div className="mt-2 h-1.5 w-full overflow-hidden bg-neutral-900">
             <div
-              className="h-full bg-[#1a8ceb] transition-all duration-150 ease-out"
+              className="h-full bg-[var(--accent-blue)] transition-all duration-150 ease-out"
               style={{ width: `${Math.min(100, Math.max(0, percent))}%` }}
             />
           </div>
@@ -67,9 +74,9 @@ export default function ExportProgressToast({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="shrink-0 text-neutral-500 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+            className="shrink-0 text-neutral-500 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
           >
-            <X className="h-4 w-4" />
+            <X size={16} />
           </button>
         )}
       </div>

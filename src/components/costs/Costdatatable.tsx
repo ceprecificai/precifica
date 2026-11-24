@@ -3,11 +3,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
-  CopyIcon,
-  Pencil as EditIcon,
-  Trash2 as TrashIcon,
-  PackageSearch,
-} from "lucide-react";
+  Copy,
+  PencilSimple as EditIcon,
+  Trash as TrashIcon,
+  Package,
+} from "@phosphor-icons/react";
 import type { Custo, OrderOption } from "@/components/costs/hooks/types";
 import { formatBR, getCostKey } from "@/components/costs/hooks/utils";
 import CostHeader from "@/components/costs/Costheader";
@@ -76,7 +76,7 @@ function ColGroup() {
 function NewBadge() {
   return (
     <span
-      className="ml-1.5 inline-flex shrink-0 items-center rounded-none border border-[#1a8ceb]/40 bg-[#1a8ceb]/10 px-1.5 py-[1px] text-[9px] font-semibold uppercase tracking-wide text-[#1a8ceb]"
+      className="ml-1.5 inline-flex shrink-0 items-center rounded-none border border-[var(--accent-blue)]/40 bg-[var(--accent-blue)]/10 px-1.5 py-[1px] text-[9px] font-semibold uppercase tracking-wide text-[var(--accent-blue)]"
       title="Adicionado recentemente"
     >
       Novo
@@ -106,8 +106,12 @@ function IconBtn({
         border border-transparent text-neutral-500
         transition-colors
         hover:border-neutral-800 hover:bg-neutral-900
-        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
-        ${variant === "edit" ? "hover:text-[#1a8ceb]" : "hover:text-red-500"}
+        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+        ${
+          variant === "edit"
+            ? "hover:text-[var(--accent-blue)]"
+            : "hover:text-[var(--destructive)]"
+        }
       `}
     >
       {children}
@@ -143,12 +147,14 @@ function CopyBtn({
           cursor-pointer opacity-0 transition-opacity
           group-hover:opacity-100
           focus-visible:opacity-100 focus-visible:outline-none
-          focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
+          focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
         "
       >
-        <CopyIcon
+        <Copy
           className={`h-3 w-3 ${
-            isCopied ? "text-[#1a8ceb]" : "text-neutral-500 hover:text-[#1a8ceb]"
+            isCopied
+              ? "text-[var(--accent-blue)]"
+              : "text-neutral-500 hover:text-[var(--accent-blue)]"
           }`}
         />
       </button>
@@ -158,8 +164,8 @@ function CopyBtn({
           role="status"
           className="
             absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap
-            border border-[#1a8ceb]/40 bg-[#0d0d0d] px-2 py-0.5
-            text-[10px] font-medium text-[#1a8ceb] shadow-lg
+            border border-[var(--accent-blue)]/40 bg-[#0d0d0d] px-2 py-0.5
+            text-[10px] font-medium text-[var(--accent-blue)] shadow-lg
           "
         >
           Copiado!
@@ -186,7 +192,7 @@ function TableSkeleton() {
 function EmptyStateContent() {
   return (
     <div className="flex flex-col items-center gap-2 py-14 text-center">
-      <PackageSearch className="h-8 w-8 text-neutral-700" aria-hidden="true" />
+      <Package className="h-8 w-8 text-neutral-700" aria-hidden="true" />
       <p className="text-sm text-neutral-400">Nenhum registro encontrado</p>
       <p className="text-xs text-neutral-500">
         Tente ajustar os filtros ou limpar a busca.
@@ -238,7 +244,7 @@ const CostTableRow = React.memo(function CostTableRow({
     <TableRow
       className={`group border-b border-neutral-900 transition-colors ${
         isSelected
-          ? "bg-[#1a8ceb]/[0.06] hover:bg-[#1a8ceb]/[0.09]"
+          ? "bg-[var(--accent-blue)]/[0.06] hover:bg-[var(--accent-blue)]/[0.09]"
           : "hover:bg-neutral-900/40"
       }`}
     >
@@ -249,7 +255,7 @@ const CostTableRow = React.memo(function CostTableRow({
           disabled={rowKey === null}
           onChange={(e) => onToggle(row, e.target.checked)}
           aria-label={`Selecionar produto ${codigo}`}
-          className="h-3.5 w-3.5 cursor-pointer accent-[#1a8ceb] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+          className="h-3.5 w-3.5 cursor-pointer accent-[var(--accent-blue)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
         />
       </TableCell>
 
@@ -290,7 +296,7 @@ const CostTableRow = React.memo(function CostTableRow({
             type="button"
             onClick={(e) => openCostEditor(row, e, "Custo Atual")}
             aria-label={`Editar custo atual de ${produto}`}
-            className="text-[#1a8ceb] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+            className="text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
           >
             {moneyOrDash(row["Custo Atual"])}
           </button>
@@ -309,7 +315,7 @@ const CostTableRow = React.memo(function CostTableRow({
           type="button"
           onClick={(e) => openCostEditor(row, e, "Custo Antigo")}
           aria-label={`Editar custo antigo de ${produto}`}
-          className="text-[#1a8ceb] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+          className="text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
         >
           {moneyOrDash(row["Custo Antigo"])}
         </button>
@@ -475,7 +481,7 @@ export default function CostDataTable({
                 key={rowKey ?? `row-${i}`}
                 className={`border p-3 transition-colors ${
                   isSelected
-                    ? "border-[#1a8ceb]/40 bg-[#1a8ceb]/[0.05]"
+                    ? "border-[var(--accent-blue)]/40 bg-[var(--accent-blue)]/[0.05]"
                     : "border-neutral-800 bg-[#0a0a0a]"
                 }`}
               >
@@ -496,7 +502,7 @@ export default function CostDataTable({
                     disabled={rowKey === null}
                     onChange={(e) => toggleSelectedRow(c, e.target.checked)}
                     aria-label={`Selecionar produto ${c["Código"]}`}
-                    className="mt-1 h-3.5 w-3.5 shrink-0 cursor-pointer accent-[#1a8ceb] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                    className="mt-1 h-3.5 w-3.5 shrink-0 cursor-pointer accent-[var(--accent-blue)] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
                   />
                 </div>
 
@@ -517,7 +523,7 @@ export default function CostDataTable({
                       type="button"
                       onClick={(e) => openCostEditor(c, e, "Custo Atual")}
                       aria-label={`Editar custo atual de ${produto}`}
-                      className="mt-1 block truncate text-[#1a8ceb] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                      className="mt-1 block truncate text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
                     >
                       {moneyOrDash(c["Custo Atual"])}
                     </button>
@@ -529,7 +535,7 @@ export default function CostDataTable({
                       type="button"
                       onClick={(e) => openCostEditor(c, e, "Custo Antigo")}
                       aria-label={`Editar custo antigo de ${produto}`}
-                      className="mt-1 block truncate text-[#1a8ceb] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                      className="mt-1 block truncate text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
                     >
                       {moneyOrDash(c["Custo Antigo"])}
                     </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { CaretRight, DotsThree } from "@phosphor-icons/react";
 
 type Props = {
   path: string[];
@@ -19,12 +19,12 @@ export default function CostLocation({ path }: Props) {
     <div className="flex items-center gap-1.5 text-[13px] text-neutral-500">
       {expanded &&
         rest.length > 0 &&
-        rest.map((item) => (
-          <React.Fragment key={item}>
+        rest.map((item, i) => (
+          <React.Fragment key={`${item}-${i}`}>
             <span className="cursor-default text-neutral-500 transition-colors hover:text-neutral-300">
               {item}
             </span>
-            <ChevronRight className="h-3 w-3 text-neutral-700" aria-hidden="true" />
+            <CaretRight className="h-3 w-3 text-neutral-700" aria-hidden="true" />
           </React.Fragment>
         ))}
 
@@ -37,15 +37,17 @@ export default function CostLocation({ path }: Props) {
           className="
             flex h-5 w-5 items-center justify-center
             text-neutral-600 transition-colors
-            hover:text-[#1a8ceb]
-            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
+            hover:text-[var(--accent-blue)]
+            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
           "
         >
-          <MoreHorizontal className="h-3.5 w-3.5" />
+          <DotsThree className="h-3.5 w-3.5" weight="bold" />
         </button>
       )}
 
-      {rest.length > 0 && <ChevronRight className="h-3 w-3 text-neutral-700" aria-hidden="true" />}
+      {rest.length > 0 && (
+        <CaretRight className="h-3 w-3 text-neutral-700" aria-hidden="true" />
+      )}
 
       <span className="font-medium text-white">{last}</span>
     </div>

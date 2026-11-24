@@ -1,4 +1,3 @@
-// CostDataTable.tsx
 "use client";
 
 import React from "react";
@@ -9,11 +8,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  CopyIcon,
-  Pencil as EditIcon,
-  Loader2,
-  Trash2 as TrashIcon,
-} from "lucide-react";
+  Copy,
+  PencilSimple as EditIcon,
+  SpinnerGap,
+  Trash as TrashIcon,
+} from "@phosphor-icons/react";
 import { Custo } from "@/components/costtable/types";
 import { formatBR } from "@/components/costtable/utils";
 
@@ -52,7 +51,11 @@ function IconBtn({
         text-neutral-500
         transition-colors
         hover:border-neutral-800 hover:bg-neutral-900
-        ${variant === "edit" ? "hover:text-amber-500" : "hover:text-red-500"}
+        ${
+          variant === "edit"
+            ? "hover:text-[var(--accent-blue)]"
+            : "hover:text-[var(--destructive)]"
+        }
       `}
     >
       {children}
@@ -78,10 +81,14 @@ function CopyBtn({
       type="button"
       onClick={() => handleCopy(value, copyKey)}
       className="shrink-0 cursor-pointer opacity-0 transition-opacity group-hover:opacity-100"
+      aria-label="Copiar"
     >
-      <CopyIcon
+      <Copy
+        weight="regular"
         className={`h-3 w-3 ${
-          copiedId === copyKey ? "text-amber-500" : "text-neutral-500 hover:text-amber-500"
+          copiedId === copyKey
+            ? "text-[var(--accent-blue)]"
+            : "text-neutral-500 hover:text-[var(--accent-blue)]"
         }`}
       />
     </button>
@@ -127,10 +134,13 @@ export default function CostDataTable({
   return (
     <>
       {/* MOBILE */}
-      <div className="md:hidden space-y-2 px-2 pb-4">
+      <div className="space-y-2 px-2 pb-4 md:hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-6 w-6 animate-spin text-neutral-500" />
+            <SpinnerGap
+              weight="regular"
+              className="h-6 w-6 animate-spin text-neutral-500"
+            />
           </div>
         ) : rows.length === 0 ? (
           <div className="py-10 text-center text-sm text-neutral-500">
@@ -145,7 +155,7 @@ export default function CostDataTable({
                 key={`${c["Código"]}-${i}`}
                 className={`border p-3 transition-colors ${
                   isSelected
-                    ? "border-amber-500/40 bg-amber-500/[0.04]"
+                    ? "border-[var(--accent-blue)]/40 bg-[var(--accent-blue-soft)]"
                     : "border-neutral-800 bg-[#0a0a0a]"
                 }`}
               >
@@ -164,45 +174,59 @@ export default function CostDataTable({
                     type="checkbox"
                     checked={isSelected}
                     onChange={(e) => toggleSelectedRow(c, e.target.checked)}
-                    className="mt-1 h-3.5 w-3.5 shrink-0 cursor-pointer accent-amber-500"
+                    className="mt-1 h-3.5 w-3.5 shrink-0 cursor-pointer accent-[var(--accent-blue)]"
                   />
                 </div>
 
                 <div className="mt-3 grid grid-cols-2 gap-1.5 text-xs text-neutral-400">
                   <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">Código</div>
-                    <div className="mt-1 truncate text-white">{c["Código"] || "-"}</div>
+                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                      Código
+                    </div>
+                    <div className="mt-1 truncate text-white">
+                      {c["Código"] || "-"}
+                    </div>
                   </div>
 
                   <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">NCM</div>
-                    <div className="mt-1 truncate text-white">{c["NCM"] || "-"}</div>
+                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                      NCM
+                    </div>
+                    <div className="mt-1 truncate text-white">
+                      {c["NCM"] || "-"}
+                    </div>
                   </div>
 
                   <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">Custo Atual</div>
+                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                      Custo Atual
+                    </div>
                     <button
                       type="button"
                       onClick={(e) => openCostEditor(c, e)}
-                      className="mt-1 truncate text-amber-500 underline-offset-2 hover:underline"
+                      className="mt-1 truncate text-[var(--accent-blue)] underline-offset-2 hover:underline"
                     >
                       R$ {formatBR(c["Custo Atual"])}
                     </button>
                   </div>
 
                   <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">Custo Antigo</div>
-                    <div className="mt-1 truncate text-white">R$ {formatBR(c["Custo Antigo"])}</div>
+                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                      Custo Antigo
+                    </div>
+                    <div className="mt-1 truncate text-white">
+                      R$ {formatBR(c["Custo Antigo"])}
+                    </div>
                   </div>
                 </div>
 
                 <div className="mt-3 flex justify-end gap-1">
                   <IconBtn variant="edit" onClick={() => openEdit(c)}>
-                    <EditIcon className="h-3.5 w-3.5" />
+                    <EditIcon weight="regular" className="h-3.5 w-3.5" />
                   </IconBtn>
 
                   <IconBtn variant="delete" onClick={() => openDeleteOne(c)}>
-                    <TrashIcon className="h-3.5 w-3.5" />
+                    <TrashIcon weight="regular" className="h-3.5 w-3.5" />
                   </IconBtn>
                 </div>
               </div>
@@ -220,13 +244,19 @@ export default function CostDataTable({
                 <TableRow>
                   <TableCell colSpan={8}>
                     <div className="flex items-center justify-center py-16">
-                      <Loader2 className="h-6 w-6 animate-spin text-neutral-500" />
+                      <SpinnerGap
+                        weight="regular"
+                        className="h-6 w-6 animate-spin text-neutral-500"
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
               ) : rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-10 text-center text-sm text-neutral-500">
+                  <TableCell
+                    colSpan={8}
+                    className="py-10 text-center text-sm text-neutral-500"
+                  >
                     Nenhum registro encontrado
                   </TableCell>
                 </TableRow>
@@ -238,7 +268,9 @@ export default function CostDataTable({
                     <TableRow
                       key={`${c["Código"]}-${i}`}
                       className={`group border-b border-neutral-900 transition-colors ${
-                        isSelected ? "bg-amber-500/[0.05] hover:bg-amber-500/[0.08]" : "hover:bg-neutral-900/40"
+                        isSelected
+                          ? "bg-[var(--accent-blue-soft)] hover:bg-[var(--accent-blue-soft)]"
+                          : "hover:bg-neutral-900/40"
                       }`}
                     >
                       <TableCell className="w-[48px] text-center">
@@ -246,7 +278,7 @@ export default function CostDataTable({
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => toggleSelectedRow(c, e.target.checked)}
-                          className="h-3.5 w-3.5 cursor-pointer accent-amber-500"
+                          className="h-3.5 w-3.5 cursor-pointer accent-[var(--accent-blue)]"
                         />
                       </TableCell>
 
@@ -283,7 +315,7 @@ export default function CostDataTable({
                           <button
                             type="button"
                             onClick={(e) => openCostEditor(c, e)}
-                            className="text-amber-500 underline-offset-2 hover:underline"
+                            className="text-[var(--accent-blue)] underline-offset-2 hover:underline"
                           >
                             R$ {formatBR(c["Custo Atual"])}
                           </button>
@@ -316,11 +348,14 @@ export default function CostDataTable({
                       <TableCell className="w-[100px]">
                         <div className="flex justify-center gap-1">
                           <IconBtn variant="edit" onClick={() => openEdit(c)}>
-                            <EditIcon className="h-3.5 w-3.5" />
+                            <EditIcon weight="regular" className="h-3.5 w-3.5" />
                           </IconBtn>
 
-                          <IconBtn variant="delete" onClick={() => openDeleteOne(c)}>
-                            <TrashIcon className="h-3.5 w-3.5" />
+                          <IconBtn
+                            variant="delete"
+                            onClick={() => openDeleteOne(c)}
+                          >
+                            <TrashIcon weight="regular" className="h-3.5 w-3.5" />
                           </IconBtn>
                         </div>
                       </TableCell>

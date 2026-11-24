@@ -1,4 +1,3 @@
-// ConfirmDelete.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -9,7 +8,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Loader2, AlertTriangle, ClipboardList } from "lucide-react";
+import { SpinnerGap, Warning, ClipboardText } from "@phosphor-icons/react";
 
 type Severity = "danger" | "warning";
 
@@ -28,17 +27,10 @@ type Props = {
   errorMessage?: string | null;
 };
 
-const RED = "#ef4444";
-const AMBER = "#f59e0b";
-
+// Tokens do globals.css (--destructive / --warning / --accent-blue)
 const SEVERITY_COLOR: Record<Severity, string> = {
-  danger: RED,
-  warning: AMBER,
-};
-
-const SEVERITY_HOVER: Record<Severity, string> = {
-  danger: "#f87171",
-  warning: "#fbbf24",
+  danger: "var(--destructive)",
+  warning: "var(--warning)",
 };
 
 /** Componente cabeçalho das seções (idêntico ao ConfirmImportModal) */
@@ -86,7 +78,7 @@ function AlertBox({
           className="flex h-6 w-6 shrink-0 items-center justify-center border border-neutral-800"
           style={{ color }}
         >
-          <AlertTriangle className="h-3.5 w-3.5" />
+          <Warning className="h-3.5 w-3.5" />
         </div>
         <div>
           <strong className="text-[11px] font-semibold uppercase tracking-[0.1em]" style={{ color }}>
@@ -114,7 +106,6 @@ export default function ConfirmDelete({
   errorMessage,
 }: Props) {
   const ACCENT = SEVERITY_COLOR[severity];
-  const ACCENT_HOVER = SEVERITY_HOVER[severity];
 
   const needsExtraConfirm = count >= requireExtraConfirmThreshold;
   const [extraConfirmed, setExtraConfirmed] = useState(false);
@@ -162,7 +153,7 @@ export default function ConfirmDelete({
         {/* Cabeçalho */}
         <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4" style={{ color: ACCENT }} />
+            <Warning className="h-4 w-4" style={{ color: ACCENT }} />
             <DialogTitle className="text-base font-semibold text-white sm:text-lg">{title}</DialogTitle>
           </div>
           <p className="mt-1 text-[11px] text-neutral-500">{targetLabel}</p>
@@ -173,7 +164,7 @@ export default function ConfirmDelete({
           {/* Resumo */}
           <div>
             <SectionHeader
-              icon={<ClipboardList className="h-3.5 w-3.5" />}
+              icon={<ClipboardText className="h-3.5 w-3.5" />}
               title="Resumo da exclusão"
               description="Confira os itens antes de confirmar."
             />
@@ -181,7 +172,11 @@ export default function ConfirmDelete({
               <span className="text-[11px] text-neutral-500">Deseja excluir</span>
               <span
                 className="border px-2 py-0.5 text-[11px] font-semibold"
-                style={{ borderColor: `${ACCENT}40`, color: ACCENT, backgroundColor: `${ACCENT}14` }}
+                style={{
+                  borderColor: `color-mix(in srgb, ${ACCENT} 25%, transparent)`,
+                  color: ACCENT,
+                  backgroundColor: `color-mix(in srgb, ${ACCENT} 8%, transparent)`,
+                }}
               >
                 {count} {count === 1 ? itemLabel : itemLabelPlural}
               </span>
@@ -194,7 +189,7 @@ export default function ConfirmDelete({
               <div className="my-5 h-px bg-neutral-900" />
               <div>
                 <SectionHeader
-                  icon={<ClipboardList className="h-3.5 w-3.5" />}
+                  icon={<ClipboardText className="h-3.5 w-3.5" />}
                   title="Itens selecionados"
                   description="Amostra dos itens que serão excluídos"
                 />
@@ -232,7 +227,7 @@ export default function ConfirmDelete({
                   checked={extraConfirmed}
                   onChange={(e) => setExtraConfirmed(e.target.checked)}
                   disabled={isBusy}
-                  className="mt-0.5 h-4 w-4 accent-red-500"
+                  className="mt-0.5 h-4 w-4 accent-[var(--destructive)]"
                 />
                 Confirmo que quero excluir esses {count} itens em massa.
               </label>
@@ -243,7 +238,7 @@ export default function ConfirmDelete({
           {errorMessage && (
             <>
               <div className="my-5 h-px bg-neutral-900" />
-              <AlertBox color={RED} title="Erro" message={errorMessage} />
+              <AlertBox color="var(--destructive)" title="Erro" message={errorMessage} />
             </>
           )}
         </div>
@@ -268,18 +263,12 @@ export default function ConfirmDelete({
               e.stopPropagation();
               void handleConfirm();
             }}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-none border text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto sm:px-6 cursor-pointer"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-none border text-sm font-medium text-white transition-[filter] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:brightness-100 sm:h-10 sm:w-auto sm:px-6 cursor-pointer"
             style={{ backgroundColor: ACCENT, borderColor: ACCENT }}
-            onMouseEnter={(e) => {
-              if (!confirmDisabled) (e.currentTarget as HTMLButtonElement).style.backgroundColor = ACCENT_HOVER;
-            }}
-            onMouseLeave={(e) => {
-              if (!confirmDisabled) (e.currentTarget as HTMLButtonElement).style.backgroundColor = ACCENT;
-            }}
           >
             {isBusy ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <SpinnerGap className="h-4 w-4 animate-spin" />
                 Excluindo...
               </>
             ) : (

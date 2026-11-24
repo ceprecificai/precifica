@@ -16,7 +16,7 @@ import ExportProgressToast from "@/components/costs/Exportprogresstoast";
 
 import { useCosts } from "@/components/costs/hooks/usecosts";
 
-import { Check as CheckIcon, X as XIcon, Menu, SlidersHorizontal } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, List as Menu, SlidersHorizontal } from "@phosphor-icons/react";
 
 export default function Costs() {
   const {

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, X, Loader2 } from "lucide-react";
+import { CheckCircle, X, SpinnerGap } from "@phosphor-icons/react";
 
 type Props = {
   open: boolean;
@@ -20,7 +20,8 @@ export default function ImportProgressToast({
 }: Props) {
   if (!open) return null;
 
-  const done = percent >= 100;
+  const safePercent = Math.min(100, Math.max(0, percent));
+  const done = safePercent >= 100;
 
   return (
     <div
@@ -37,9 +38,18 @@ export default function ImportProgressToast({
       <div className="flex items-start gap-3">
         <div className="mt-0.5 shrink-0">
           {done ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+            <CheckCircle
+              size={20}
+              weight="fill"
+              className="text-emerald-500"
+              aria-hidden="true"
+            />
           ) : (
-            <Loader2 className="h-5 w-5 animate-spin text-[#1a8ceb]" />
+            <SpinnerGap
+              size={20}
+              className="animate-spin text-[var(--accent-blue)]"
+              aria-hidden="true"
+            />
           )}
         </div>
 
@@ -48,16 +58,24 @@ export default function ImportProgressToast({
             {done ? "Importação concluída!" : title}
           </p>
 
-          {message && <p className="mt-0.5 text-xs text-neutral-400">{message}</p>}
+          {message && (
+            <p className="mt-0.5 text-xs text-neutral-400">{message}</p>
+          )}
 
-          <div className="mt-2 h-1.5 w-full overflow-hidden bg-neutral-900">
+          <div
+            className="mt-2 h-1.5 w-full overflow-hidden bg-neutral-900"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={safePercent}
+          >
             <div
-              className="h-full bg-[#1a8ceb] transition-all duration-150 ease-out"
-              style={{ width: `${Math.min(100, Math.max(0, percent))}%` }}
+              className="h-full bg-[var(--accent-blue)] transition-all duration-150 ease-out"
+              style={{ width: `${safePercent}%` }}
             />
           </div>
 
-          <p className="mt-1 text-[11px] text-neutral-500">{percent}%</p>
+          <p className="mt-1 text-[11px] text-neutral-500">{safePercent}%</p>
         </div>
 
         {onClose && (
@@ -65,9 +83,13 @@ export default function ImportProgressToast({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="shrink-0 text-neutral-500 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+            className="
+              shrink-0 cursor-pointer text-neutral-500 transition-colors
+              hover:text-white
+              focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+            "
           >
-            <X className="h-4 w-4" />
+            <X size={16} />
           </button>
         )}
       </div>

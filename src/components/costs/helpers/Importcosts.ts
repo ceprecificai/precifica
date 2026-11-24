@@ -1,8 +1,6 @@
-// ImportCosts.ts
-
 import * as XLSX from "xlsx";
 import { supabase } from "@/integrations/supabase/client";
-import { createNotification } from "@/lib/createNotification";
+import { createNotification } from "@/lib/createnotification";
 
 export type ImportResult = {
   data: any[];

@@ -1,20 +1,30 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "standalone",
 
-const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "avatars.githubusercontent.com" },
+    ],
+  },
+
+  typescript: { ignoreBuildErrors: true },
+
+  reactStrictMode: false,
+
+  transpilePackages: [
+    "@tauri-apps/api",
+    "@supabase/auth-helpers-nextjs",
+  ],
+
   experimental: {
-    agentFeedback: true,
-  },
-  cacheComponents: true,
-  partialPrefetching: true,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
+    serverActions: { bodySizeLimit: "50mb" },
+
+    // DESATIVA LightningCSS do Next completamente
+    optimizeCss: false,
+  }
 };
 
-export default nextConfig;
+module.exports = nextConfig;

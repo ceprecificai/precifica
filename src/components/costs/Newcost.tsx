@@ -16,12 +16,16 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { DollarSign, Loader2, AlertCircle } from "lucide-react";
+import {
+  CurrencyDollar,
+  SpinnerGap,
+  WarningCircle,
+} from "@phosphor-icons/react";
 import { supabase } from "@/integrations/supabase/client";
-import { createNotification } from "@/lib/createNotification";
-import { toastCustom } from "@/utils/toastCustom";
+import { createNotification } from "@/lib/createnotification";
+import { toastCustom } from "@/utils/toastcustom";
 
-const SCHEMA = "newsystem";
+const SCHEMA = "public";
 
 export type Custo = {
   code: string;
@@ -45,7 +49,17 @@ type SugestaoMarca = {
   marca: string;
 };
 
-const ACCENT = "#1a8ceb";
+// Tokens do globals.css (--accent-blue / --accent-blue-soft / --destructive)
+const ACCENT_CLASS = "text-[var(--accent-blue)]";
+const ACCENT_BG_CLASS = "bg-[var(--accent-blue)]";
+const ACCENT_BORDER_CLASS = "border-[var(--accent-blue)]";
+const ERROR_TEXT_CLASS = "text-[11px] text-[var(--destructive)]";
+const ERROR_BORDER_CLASS = "!border-[var(--destructive)]";
+
+const FIELD_CLASS =
+  "h-10 border-neutral-800 bg-transparent text-white transition-colors focus-visible:border-[var(--accent-blue)] focus-visible:ring-1 focus-visible:ring-[var(--accent-blue-soft)] focus-visible:ring-offset-0";
+
+const LABEL_CLASS = "text-xs font-medium text-neutral-500";
 
 function normalize(s: string) {
   return (s || "")
@@ -105,10 +119,10 @@ const BrandDropdown: React.FC<BrandDropdownProps> = ({
   return (
     <div
       ref={listaRef}
-      className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto border border-neutral-800 bg-[#0a0a0a] shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150"
+      className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto rounded-md border border-neutral-800 bg-[#0a0a0a] p-1 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150"
     >
       {loading ? (
-        <div className="space-y-1 p-2">
+        <div className="space-y-1 p-1">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
@@ -122,10 +136,10 @@ const BrandDropdown: React.FC<BrandDropdownProps> = ({
         sugestoes.map((s, i) => (
           <div
             key={`${s.marca}-${i}`}
-            className={`flex cursor-pointer items-center justify-between px-2 py-2 text-xs text-white ${
+            className={`flex cursor-pointer items-center justify-between rounded px-2 py-2 text-xs text-white transition-colors ${
               i === indiceSelecionado
-                ? "bg-[#1a8ceb]/20"
-                : "hover:bg-[#1a8ceb]/10"
+                ? "bg-[var(--accent-blue)]/20"
+                : "hover:bg-[var(--accent-blue)]/10"
             }`}
             onMouseDown={(e) => {
               e.preventDefault();
@@ -135,9 +149,7 @@ const BrandDropdown: React.FC<BrandDropdownProps> = ({
             <span className="truncate">{s.marca}</span>
 
             {i < 9 && (
-              <span className="ml-3 shrink-0" style={{ color: ACCENT }}>
-                {i + 1}
-              </span>
+              <span className={`ml-3 shrink-0 ${ACCENT_CLASS}`}>{i + 1}</span>
             )}
           </div>
         ))
@@ -643,6 +655,7 @@ export default function NewCost({
         className="
           bg-[#0a0a0a]
           border border-neutral-800
+          rounded-lg
           shadow-2xl
 
           w-[calc(100vw-16px)]
@@ -662,7 +675,7 @@ export default function NewCost({
       >
         <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
           <div className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" style={{ color: ACCENT }} />
+            <CurrencyDollar size={16} weight="bold" className={ACCENT_CLASS} />
 
             <DialogTitle className="text-base font-semibold text-white sm:text-lg">
               {mode === "create" ? "Novo Custo" : "Editar Custo"}
@@ -673,7 +686,7 @@ export default function NewCost({
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <Label className="text-neutral-500">
+              <Label className={LABEL_CLASS}>
                 {mode === "edit" ? "Código Atual" : "Código"}
               </Label>
 
@@ -688,14 +701,9 @@ export default function NewCost({
                 disabled={mode === "edit"}
                 aria-invalid={Boolean(errors.code)}
                 aria-describedby={errors.code ? "codigo-error" : undefined}
-                className={`
-                  border-neutral-800
-                  bg-transparent
-                  text-white
-                  disabled:cursor-not-allowed
-                  disabled:opacity-60
-                  ${errors.code ? "border-red-500" : ""}
-                `}
+                className={`${FIELD_CLASS} disabled:cursor-not-allowed disabled:opacity-60 ${
+                  errors.code ? ERROR_BORDER_CLASS : ""
+                }`}
                 placeholder="Ex: 5535 ou TN 5AM"
               />
 
@@ -708,14 +716,15 @@ export default function NewCost({
               {mode === "create" && !codigoCheckLoading && codigoDuplicado && (
                 <p
                   id="codigo-error"
-                  className="mt-1 flex items-center gap-1 text-[11px] text-red-500"
+                  className={`mt-1 flex items-center gap-1 ${ERROR_TEXT_CLASS}`}
                 >
-                  <AlertCircle className="h-3 w-3" /> Este código já existe.
+                  <WarningCircle size={12} className="shrink-0" />
+                  Este código já existe.
                 </p>
               )}
 
               {errors.code && !(mode === "create" && codigoDuplicado) && (
-                <p id="codigo-error" className="mt-1 text-[11px] text-red-500">
+                <p id="codigo-error" className={`mt-1 ${ERROR_TEXT_CLASS}`}>
                   {errors.code}
                 </p>
               )}
@@ -723,18 +732,15 @@ export default function NewCost({
 
             {mode === "edit" && (
               <div>
-                <Label className="text-neutral-500">Código Novo</Label>
+                <Label className={LABEL_CLASS}>Código Novo</Label>
 
                 <Input
                   value={novoCodigo}
                   onChange={(e) => handleNovoCodigoChange(e.target.value)}
                   aria-invalid={codigoDuplicado && Boolean(novoCodigo.trim())}
-                  className={`
-                    border-neutral-800
-                    bg-transparent
-                    text-white
-                    ${codigoDuplicado && novoCodigo.trim() ? "border-red-500" : ""}
-                  `}
+                  className={`${FIELD_CLASS} ${
+                    codigoDuplicado && novoCodigo.trim() ? ERROR_BORDER_CLASS : ""
+                  }`}
                   placeholder={`Ex: ${form.code}`}
                   autoComplete="off"
                 />
@@ -746,13 +752,16 @@ export default function NewCost({
                 )}
 
                 {!codigoCheckLoading && codigoDuplicado && Boolean(novoCodigo.trim()) && (
-                  <p className="mt-1 flex items-center gap-1 text-[11px] text-red-500">
-                    <AlertCircle className="h-3 w-3" /> Este código já existe.
+                  <p
+                    className={`mt-1 flex items-center gap-1 ${ERROR_TEXT_CLASS}`}
+                  >
+                    <WarningCircle size={12} className="shrink-0" />
+                    Este código já existe.
                   </p>
                 )}
 
                 {houveRenomeacaoPreview && !codigoDuplicado && (
-                  <p className="mt-1 text-[11px]" style={{ color: ACCENT }}>
+                  <p className={`mt-1 text-[11px] ${ACCENT_CLASS}`}>
                     O código "{oldCodigo}" será renomeado para "{novoCodigo.trim()}".
                   </p>
                 )}
@@ -760,7 +769,7 @@ export default function NewCost({
             )}
 
             <div ref={marcaWrapRef} className="relative md:col-span-2">
-              <Label className="text-neutral-500">Marca</Label>
+              <Label className={LABEL_CLASS}>Marca</Label>
 
               <Input
                 value={form.mark}
@@ -773,15 +782,13 @@ export default function NewCost({
                 onFocus={() => setMarcaFocus(true)}
                 onKeyDown={onMarcaKeyDown}
                 aria-invalid={Boolean(errors.mark)}
-                className={`border-neutral-800 bg-transparent text-white ${
-                  errors.mark ? "border-red-500" : ""
-                }`}
+                className={`${FIELD_CLASS} ${errors.mark ? ERROR_BORDER_CLASS : ""}`}
                 placeholder="Ex: Liverpool"
                 autoComplete="off"
               />
 
               {errors.mark && (
-                <p className="mt-1 text-[11px] text-red-500">{errors.mark}</p>
+                <p className={`mt-1 ${ERROR_TEXT_CLASS}`}>{errors.mark}</p>
               )}
 
               <BrandDropdown
@@ -796,59 +803,57 @@ export default function NewCost({
             </div>
 
             <div className="md:col-span-2">
-              <Label className="text-neutral-500">Produto</Label>
+              <Label className={LABEL_CLASS}>Produto</Label>
 
               <Input
                 ref={produtoInputRef}
                 value={form.product || ""}
                 onChange={(e) => setForm({ ...form, product: e.target.value })}
-                className="border-neutral-800 bg-transparent text-white"
+                className={FIELD_CLASS}
                 placeholder="Ex: Baqueta 7A Liverpool Luminous Series"
               />
             </div>
 
             <div>
-              <Label className="text-neutral-500">Custo Atual</Label>
+              <Label className={LABEL_CLASS}>Custo Atual</Label>
 
               <Input
                 type="text"
                 inputMode="numeric"
                 value={form.current_cost || ""}
                 onChange={(e) => handleCustoChange("current_cost", e.target.value)}
-                className="border-neutral-800 bg-transparent text-white"
+                className={FIELD_CLASS}
                 placeholder="Ex: 89,90"
               />
             </div>
 
             <div>
-              <Label className="text-neutral-500">Custo Antigo</Label>
+              <Label className={LABEL_CLASS}>Custo Antigo</Label>
 
               <Input
                 type="text"
                 inputMode="numeric"
                 value={form.previous_cost || ""}
                 onChange={(e) => handleCustoChange("previous_cost", e.target.value)}
-                className="border-neutral-800 bg-transparent text-white"
+                className={FIELD_CLASS}
                 placeholder="Ex: 79,90"
               />
             </div>
 
             <div className="md:col-span-2">
-              <Label className="text-neutral-500">NCM</Label>
+              <Label className={LABEL_CLASS}>NCM</Label>
 
               <Input
                 value={form.ncm}
                 onChange={(e) => handleNCMChange(e.target.value)}
                 inputMode="numeric"
                 aria-invalid={!ncmValido}
-                className={`border-neutral-800 bg-transparent text-white ${
-                  !ncmValido ? "border-red-500" : ""
-                }`}
+                className={`${FIELD_CLASS} ${!ncmValido ? ERROR_BORDER_CLASS : ""}`}
                 placeholder="Ex: 8518.21.00"
               />
 
               {!ncmValido && (
-                <p className="mt-1 text-[11px] text-red-500">
+                <p className={`mt-1 ${ERROR_TEXT_CLASS}`}>
                   NCM deve conter 8 dígitos.
                 </p>
               )}
@@ -869,14 +874,13 @@ export default function NewCost({
             disabled={saving}
             onClick={() => onOpenChange(false)}
             className="
-              flex h-11 w-full items-center justify-center
-              border border-neutral-800
-              text-sm text-white
+              flex h-10 sm:h-9 w-full sm:w-auto sm:px-6 items-center justify-center
+              rounded-md border border-neutral-800
+              text-sm font-semibold text-white
               transition-colors
               cursor-pointer
               hover:bg-neutral-900
               disabled:cursor-not-allowed disabled:opacity-50
-              sm:h-10 sm:w-auto sm:px-6
             "
           >
             Cancelar
@@ -889,30 +893,18 @@ export default function NewCost({
             onKeyDown={(e) => {
               if (e.key === "Enter") e.preventDefault();
             }}
-            className="
-              flex h-11 w-full items-center justify-center gap-2
-              text-sm font-medium text-black
+            className={`
+              flex h-10 sm:h-9 w-full sm:w-auto sm:px-6 items-center justify-center gap-2
+              rounded-md border ${ACCENT_BORDER_CLASS} ${ACCENT_BG_CLASS}
+              text-sm font-semibold text-black
               transition-colors
               cursor-pointer
+              hover:border-[#3b9df0] hover:bg-[#3b9df0]
               disabled:cursor-not-allowed disabled:opacity-50
-              sm:h-10 sm:w-auto sm:px-6
-              border
-            "
-            style={{
-              backgroundColor: ACCENT,
-              borderColor: ACCENT,
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#3b9df0";
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "#3b9df0";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = ACCENT;
-              (e.currentTarget as HTMLButtonElement).style.borderColor = ACCENT;
-            }}
+            `}
           >
             {saving ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <SpinnerGap size={16} className="animate-spin" />
             ) : mode === "create" ? (
               "Incluir"
             ) : (

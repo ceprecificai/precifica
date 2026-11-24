@@ -1,0 +1,362 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+ * TOKENS — preto e branco com um acento sutil
+ * ───────────────────────────────────────────── */
+:root {
+  --radius: 0.625rem;
+
+  --background: #ffffff;
+  --page-background: #f5f5f5;
+  --foreground: #0a0a0a;
+
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+
+  --primary: #0a0a0a;
+  --primary-foreground: #fafafa;
+
+  --secondary: #f5f5f5;
+  --secondary-foreground: #171717;
+
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+
+  --accent: #f5f5f5;
+  --accent-foreground: #171717;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #0a0a0a;
+
+  /* Único acento cromático: usar só em status, foco de dado e pequenos detalhes */
+  --detail: #0f766e;
+  --detail-soft: #f0fdfa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-page-background: var(--page-background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-detail: var(--detail);
+  --color-detail-soft: var(--detail-soft);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    background: var(--page-background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ─────────────────────────────────────────────
+ * COMPONENTES DE PRECIFICAÇÃO (monocromáticos)
+ * ───────────────────────────────────────────── */
+
+/* Badge numerado das seções: 2. 3. 4. */
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.4rem;
+  border-radius: 0.375rem;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.acrescimo-section-title,
+.composition-section h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+/* Composição de custo */
+.composition-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
+  padding: 1rem;
+}
+
+.composition-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 1.75rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 0.625rem;
+  background: var(--secondary);
+  text-align: center;
+}
+
+.composition-empty-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.composition-empty-text {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.composition-note {
+  margin-top: 0.75rem;
+  padding: 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--secondary);
+}
+
+.composition-note-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.composition-note-icon {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  color: var(--muted-foreground);
+}
+
+.composition-note-text {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+/* Botão "Incluir Custos" */
+.btn-add-cost {
+  width: 100%;
+  justify-content: center;
+  gap: 0.5rem;
+  border-color: var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  font-weight: 600;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.btn-add-cost:hover {
+  border-color: var(--foreground);
+  background: var(--background);
+}
+
+.btn-add-cost-icon {
+  color: var(--foreground);
+}
+
+/* Ações do cabeçalho (ícones) */
+.clear-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.icon-action:hover {
+  background: var(--secondary);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.icon-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.icon-action-icon {
+  color: inherit;
+}
+
+.icon-action--danger:hover {
+  color: var(--destructive);
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.icon-action--clearing {
+  color: var(--destructive);
+}
+
+.icon-action-pulse {
+  animation: icon-pulse 1s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* Seção de acréscimo: cards monocromáticos */
+.acrescimo-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
+  padding: 1rem;
+}
+
+.acrescimo-card {
+  position: relative;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+  transition: border-color 150ms ease;
+}
+
+.acrescimo-card:hover {
+  border-color: #d4d4d4;
+}
+
+.acrescimo-card--yellow,
+.acrescimo-card--blue {
+  background: var(--card);
+}
+
+.acrescimo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.acrescimo-icon--yellow,
+.acrescimo-icon--blue {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.acrescimo-logo-text {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.acrescimo-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.acrescimo-label {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.acrescimo-value--yellow,
+.acrescimo-value--blue {
+  color: var(--foreground);
+}
+
+/* Botão de copiar */
+.copy-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.copy-btn:hover {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.copy-btn--done {
+  color: var(--detail);
+  background: var(--detail-soft);
+}
+
+/* Scrollbar discreta */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 transparent;
+}
+
+/* Foco visível padrão, sem cor de marca */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Inputs usam a borda do wrapper como indicador de foco */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}

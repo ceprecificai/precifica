@@ -10,20 +10,20 @@ import {
 } from "@/components/ui/dialog";
 
 import {
-  Loader2,
+  SpinnerGap,
   Package,
   Percent,
-  AlertCircle,
-  ClipboardList,
-  Store,
+  WarningCircle,
+  ClipboardText,
+  Storefront,
   Globe,
-  Boxes,
-  ChevronDown,
+  Cube,
+  CaretDown,
   Check,
-  Search,
+  MagnifyingGlass,
   Radio,
   Tag,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 
 import {
   CostAdjustments as CostAdjustmentsType,
@@ -67,9 +67,6 @@ type Props = {
   existingRules?: Partial<Record<keyof CostAdjustmentsType, number>>;
 };
 
-/** Cores e ícones */
-const ACCENT = "#1a8ceb";
-
 /** Tipos de configuração */
 type FieldConfig = {
   key: keyof CostAdjustmentsType;
@@ -96,9 +93,9 @@ const ALL_FIELDS: FieldConfig[] = [...COST_FIELDS, ...RULE_FIELDS];
 /** Abas de escopo */
 const SCOPE_TABS: { key: RuleScope; label: string; icon: React.ReactNode }[] = [
   { key: "global", label: "Global", icon: <Globe className="h-3.5 w-3.5" /> },
-  { key: "store", label: "Loja", icon: <Store className="h-3.5 w-3.5" /> },
+  { key: "store", label: "Loja", icon: <Storefront className="h-3.5 w-3.5" /> },
   { key: "channel", label: "Canal", icon: <Radio className="h-3.5 w-3.5" /> },
-  { key: "product", label: "Produto", icon: <Boxes className="h-3.5 w-3.5" /> },
+  { key: "product", label: "Produto", icon: <Cube className="h-3.5 w-3.5" /> },
 ];
 
 /** Componente cabeçalho das seções */
@@ -209,15 +206,15 @@ function AdjustmentField({
             disabled:cursor-not-allowed disabled:opacity-40
             ${
               error
-                ? "border-red-500/70 focus:border-red-500 focus-visible:ring-red-500"
-                : "border-neutral-800 focus:border-[#1a8ceb]/60 focus-visible:ring-[#1a8ceb]"
+                ? "border-[var(--destructive)]/70 focus:border-[var(--destructive)] focus-visible:ring-[var(--destructive)]"
+                : "border-neutral-800 focus:border-[var(--accent-blue)]/60 focus-visible:ring-[var(--accent-blue)]"
             }
           `}
         />
       </div>
       {error && (
-        <p className="mt-1 flex items-center gap-1 text-[10.5px] text-red-400">
-          <AlertCircle className="h-3 w-3 shrink-0" /> {error}
+        <p className="mt-1 flex items-center gap-1 text-[10.5px] text-[var(--destructive)]">
+          <WarningCircle className="h-3 w-3 shrink-0" /> {error}
         </p>
       )}
       {!error && previewText && <p className="mt-1 text-[10.5px] text-neutral-500">{previewText}</p>}
@@ -294,7 +291,7 @@ function OptionDropdown({
         className={`
           flex h-10 w-full items-center justify-between gap-2 border bg-transparent px-3 text-sm
           outline-none transition-colors cursor-pointer
-          ${open ? "border-[#1a8ceb]/60" : "border-neutral-800 hover:border-neutral-700"}
+          ${open ? "border-[var(--accent-blue)]/60" : "border-neutral-800 hover:border-neutral-700"}
           disabled:cursor-not-allowed disabled:opacity-50
         `}
       >
@@ -304,7 +301,7 @@ function OptionDropdown({
             {loading ? loadingLabel : selected || placeholder}
           </span>
         </span>
-        <ChevronDown
+        <CaretDown
           className={`h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
@@ -312,7 +309,7 @@ function OptionDropdown({
       {open && !isDisabled && (
         <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-[100] border border-neutral-800 bg-[#0a0a0a] shadow-2xl">
           <div className="relative border-b border-neutral-900 px-3 pt-2 pb-1">
-            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-600" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-600" />
             <input
               ref={inputRef}
               value={search}
@@ -337,7 +334,7 @@ function OptionDropdown({
                   }`}
                 >
                   <span className="truncate">{s}</span>
-                  {selectedFlag && <Check className="h-3.5 w-3.5 shrink-0" style={{ color: ACCENT }} />}
+                  {selectedFlag && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--accent-blue)]" />}
                 </button>
               );
             })}
@@ -601,7 +598,7 @@ export default function CostAdjustmentsModal({
         {/* Cabeçalho */}
         <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
           <div className="flex items-center gap-2">
-            <Percent className="h-4 w-4" style={{ color: ACCENT }} />
+            <Percent className="h-4 w-4 text-[var(--accent-blue)]" />
             <DialogTitle className="text-base font-semibold text-white sm:text-lg">Ajustes em massa</DialogTitle>
           </div>
           <p className="mt-1 text-[11px] text-neutral-500">{targetLabel}</p>
@@ -636,7 +633,7 @@ export default function CostAdjustmentsModal({
               onSelect={setSelectedStore}
               loading={loadingStores}
               disabled={applying}
-              icon={<Store className="h-3.5 w-3.5 shrink-0 text-neutral-500" />}
+              icon={<Storefront className="h-3.5 w-3.5 shrink-0 text-neutral-500" />}
               placeholder="Selecione uma loja"
               loadingLabel="Carregando lojas..."
               searchPlaceholder="Buscar loja..."
@@ -782,7 +779,7 @@ export default function CostAdjustmentsModal({
                 className="flex w-full items-center justify-between px-3 py-2 text-left cursor-pointer"
               >
                 <span className="flex items-center gap-2 text-[11px] font-medium text-neutral-300">
-                  <ClipboardList className="h-3.5 w-3.5 text-neutral-500" />
+                  <ClipboardText className="h-3.5 w-3.5 text-neutral-500" />
                   Resumo do que será aplicado
                 </span>
                 <span className="text-[10px] text-neutral-500">{showSummary ? "ocultar" : "ver detalhes"}</span>
@@ -847,20 +844,17 @@ export default function CostAdjustmentsModal({
                 : undefined
             }
             className={`
-              flex h-11 w-full items-center justify-center gap-2 border text-sm font-medium
+              flex h-11 w-full items-center justify-center gap-2 border text-sm font-medium text-white
               transition-colors sm:h-10 sm:w-auto sm:px-6
               disabled:cursor-not-allowed disabled:opacity-50
-              ${canApply ? "cursor-pointer" : ""}
+              ${
+                canApply
+                  ? "cursor-pointer border-[var(--accent-blue)] bg-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/90"
+                  : "border-neutral-800"
+              }
             `}
-            style={canApply ? { backgroundColor: ACCENT, borderColor: ACCENT } : undefined}
-            onMouseEnter={(e) => {
-              if (canApply) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#3b9df0";
-            }}
-            onMouseLeave={(e) => {
-              if (canApply) (e.currentTarget as HTMLButtonElement).style.backgroundColor = ACCENT;
-            }}
           >
-            {applying ? <Loader2 className="h-4 w-4 animate-spin" /> : "Aplicar ajustes"}
+            {applying ? <SpinnerGap className="h-4 w-4 animate-spin" /> : "Aplicar ajustes"}
           </button>
         </DialogFooter>
       </DialogContent>

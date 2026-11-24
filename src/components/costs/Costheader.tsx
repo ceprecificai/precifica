@@ -1,16 +1,16 @@
 "use client";
 
 import {
-  ArrowUpDown,
+  ArrowCounterClockwise,
+  ArrowsDownUp,
+  CaretDown,
+  CaretUp,
   CheckSquare,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-  PowerOff,
-  RotateCcw,
-  Trash2,
+  Power,
+  SpinnerGap,
+  Trash,
   X,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { TableHeader, TableRow, TableHead } from "@/components/ui/table";
 import type { OrderOption } from "@/components/costs/hooks/types";
@@ -64,17 +64,17 @@ function SortHeader({
       title={`Ordenar por ${label}`}
       aria-label={`Ordenar por ${label}`}
       className={`flex w-full cursor-pointer items-center justify-start gap-1 text-left text-[11px] font-semibold uppercase tracking-wide transition-colors hover:text-white ${
-        isActive ? "text-[#1a8ceb]" : "text-neutral-400"
+        isActive ? "text-[var(--accent-blue)]" : "text-neutral-400"
       }`}
     >
       <span className="truncate">{label}</span>
 
       {!isActive ? (
-        <ArrowUpDown className="h-3 w-3 shrink-0 text-neutral-600" aria-hidden="true" />
+        <ArrowsDownUp className="h-3 w-3 shrink-0 text-neutral-600" aria-hidden="true" />
       ) : sortDirection === "asc" ? (
-        <ChevronUp className="h-3 w-3 shrink-0 text-[#1a8ceb]" aria-hidden="true" />
+        <CaretUp className="h-3 w-3 shrink-0 text-[var(--accent-blue)]" aria-hidden="true" />
       ) : (
-        <ChevronDown className="h-3 w-3 shrink-0 text-[#1a8ceb]" aria-hidden="true" />
+        <CaretDown className="h-3 w-3 shrink-0 text-[var(--accent-blue)]" aria-hidden="true" />
       )}
     </button>
   );
@@ -123,10 +123,10 @@ function OrdemMenu({
         aria-haspopup="listbox"
         aria-expanded={open}
         title={`Ordem: ${currentLabel}`}
-        className="group relative flex h-5 w-5 cursor-pointer items-center justify-center transition-colors hover:bg-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+        className="group relative flex h-5 w-5 cursor-pointer items-center justify-center transition-colors hover:bg-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
       >
-        <ChevronDown
-          className={`h-3.5 w-3.5 text-[#1a8ceb] transition-transform group-hover:text-white ${
+        <CaretDown
+          className={`h-3.5 w-3.5 text-[var(--accent-blue)] transition-transform group-hover:text-white ${
             open ? "rotate-180" : ""
           }`}
           aria-hidden="true"
@@ -152,9 +152,9 @@ function OrdemMenu({
                   onChange(option.value);
                   setOpen(false);
                 }}
-                className={`flex w-full cursor-pointer items-center px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb] ${
+                className={`flex w-full cursor-pointer items-center px-2 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)] ${
                   active
-                    ? "bg-neutral-900 text-[#1a8ceb]"
+                    ? "bg-neutral-900 text-[var(--accent-blue)]"
                     : "text-neutral-400 hover:bg-neutral-900 hover:text-white"
                 }`}
               >
@@ -217,10 +217,10 @@ export default function CostHeader({
                 disabled={selectingAll}
                 aria-label="Selecionar todos os produtos filtrados"
                 title="Selecionar todos os produtos filtrados"
-                className="flex h-8 w-8 cursor-pointer items-center justify-center border border-[#1a8ceb]/30 text-[#1a8ceb] transition-colors hover:border-[#1a8ceb]/50 hover:bg-[#1a8ceb]/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center border border-[var(--accent-blue)]/30 text-[var(--accent-blue)] transition-colors hover:border-[var(--accent-blue)]/50 hover:bg-[var(--accent-blue)]/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {selectingAll ? (
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <SpinnerGap className="h-4 w-4 animate-spin" aria-hidden="true" />
                 ) : (
                   <CheckSquare className="h-4 w-4" aria-hidden="true" />
                 )}
@@ -233,7 +233,7 @@ export default function CostHeader({
                 onClick={onClearSelection}
                 aria-label={`Limpar seleção (${selectedCount} selecionado${selectedCount > 1 ? "s" : ""})`}
                 title="Limpar seleção"
-                className="flex h-8 w-8 cursor-pointer items-center justify-center border border-neutral-700 text-neutral-400 transition-colors hover:border-neutral-500 hover:bg-neutral-900 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center border border-neutral-700 text-neutral-400 transition-colors hover:border-neutral-500 hover:bg-neutral-900 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -256,16 +256,16 @@ export default function CostHeader({
                       : "Inativar selecionados"
                     : "Inativar"
                 }
-                className={`flex h-8 w-8 items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500 ${
+                className={`flex h-8 w-8 items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--warning)] ${
                   hasSelectedItems
-                    ? "cursor-pointer border-amber-500/30 text-amber-500 hover:border-amber-500/50 hover:bg-amber-500/10"
+                    ? "cursor-pointer border-[var(--warning)]/30 text-[var(--warning)] hover:border-[var(--warning)]/50 hover:bg-[var(--warning)]/10"
                     : "cursor-not-allowed border-neutral-800 text-neutral-600"
                 }`}
               >
                 {togglingActive ? (
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <SpinnerGap className="h-4 w-4 animate-spin" aria-hidden="true" />
                 ) : (
-                  <PowerOff className="h-4 w-4" aria-hidden="true" />
+                  <Power className="h-4 w-4" aria-hidden="true" />
                 )}
               </button>
             )}
@@ -287,13 +287,13 @@ export default function CostHeader({
                       : "Restaurar selecionados"
                     : "Restaurar"
                 }
-                className={`flex h-8 w-8 items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 ${
+                className={`flex h-8 w-8 items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--success)] ${
                   hasSelectedItems
-                    ? "cursor-pointer border-emerald-500/30 text-emerald-500 hover:border-emerald-500/50 hover:bg-emerald-500/10"
+                    ? "cursor-pointer border-[var(--success)]/30 text-[var(--success)] hover:border-[var(--success)]/50 hover:bg-[var(--success)]/10"
                     : "cursor-not-allowed border-neutral-800 text-neutral-600"
                 }`}
               >
-                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                <ArrowCounterClockwise className="h-4 w-4" aria-hidden="true" />
               </button>
             )}
 
@@ -302,7 +302,7 @@ export default function CostHeader({
               onClick={onOpenAdjustments}
               aria-label="Abrir ajustes em massa"
               title="Ajustes em massa"
-              className="flex h-8 w-8 cursor-pointer items-center justify-center border border-[#1a8ceb]/30 text-[#1a8ceb] transition-colors hover:border-[#1a8ceb]/50 hover:bg-[#1a8ceb]/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center border border-[var(--accent-blue)]/30 text-[var(--accent-blue)] transition-colors hover:border-[var(--accent-blue)]/50 hover:bg-[var(--accent-blue)]/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -338,13 +338,13 @@ export default function CostHeader({
                     : "Excluir selecionados"
                   : "Selecione itens"
               }
-              className={`flex h-8 w-8 items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-500 ${
+              className={`flex h-8 w-8 items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--destructive)] ${
                 hasSelectedItems
-                  ? "cursor-pointer border-red-500/30 text-red-500 hover:border-red-500/50 hover:bg-red-500/10"
+                  ? "cursor-pointer border-[var(--destructive)]/30 text-[var(--destructive)] hover:border-[var(--destructive)]/50 hover:bg-[var(--destructive)]/10"
                   : "cursor-not-allowed border-neutral-800 text-neutral-600"
               }`}
             >
-              <Trash2 className="h-4 w-4" aria-hidden="true" />
+              <Trash className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         </TableHead>
@@ -357,7 +357,7 @@ export default function CostHeader({
               ref={pageCheckRef}
               type="checkbox"
               aria-label="Selecionar todos os produtos da página"
-              className="h-3.5 w-3.5 cursor-pointer accent-[#1a8ceb] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+              className="h-3.5 w-3.5 cursor-pointer accent-[var(--accent-blue)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
               checked={allSelected && hasRows}
               onChange={(e) => onToggleSelectAll(e.target.checked)}
             />

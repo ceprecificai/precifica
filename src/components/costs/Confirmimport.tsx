@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/dialog";
 
 import {
-  Loader2,
-  AlertTriangle,
-  ClipboardList,
-  FileSpreadsheet,
+  SpinnerGap,
+  WarningCircle,
+  ClipboardText,
+  FileXls,
   X,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 
 import { unlockAudio } from "@/utils/sound";
 
@@ -43,11 +43,11 @@ type Props = {
   customText?: string;
 };
 
-/** Cores e ícones */
-const GREEN = "#22c55e";
-const GREEN_HOVER = "#34d365";
-const RED = "#ef4444";
-const ORANGE = "#f97316";
+/** Cores (tokens do projeto) */
+const GREEN = "var(--success)";
+const RED = "var(--destructive)";
+const ORANGE = "var(--warning)";
+const INFO = "#a3a3a3";
 
 /** Componente cabeçalho das seções */
 function SectionHeader({
@@ -140,7 +140,7 @@ function AlertBox({
           className="flex h-6 w-6 shrink-0 items-center justify-center border border-neutral-800"
           style={{ color }}
         >
-          <AlertTriangle className="h-3.5 w-3.5" />
+          <WarningCircle className="h-3.5 w-3.5" />
         </div>
         <div>
           <strong className="text-[11px] font-semibold uppercase tracking-[0.1em]" style={{ color }}>
@@ -229,7 +229,7 @@ function InlineToast({ message, onClose }: { message: InlineMessage; onClose: ()
       ? RED
       : message.type === "warning"
       ? ORANGE
-      : "#a3a3a3";
+      : INFO;
 
   return (
     <div
@@ -250,7 +250,7 @@ function InlineToast({ message, onClose }: { message: InlineMessage; onClose: ()
         type="button"
         onClick={onClose}
         aria-label="Fechar mensagem"
-        className="shrink-0 text-neutral-600 hover:text-neutral-300 cursor-pointer"
+        className="shrink-0 cursor-pointer text-neutral-600 transition-colors hover:text-neutral-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
       >
         <X className="h-3.5 w-3.5" />
       </button>
@@ -297,9 +297,8 @@ export default function ConfirmImportModal({
 
   const targetLabel = `${count} ${count === 1 ? "registro" : "registros"} detectado(s)`;
 
-  // Botão de confirmação: sempre VERDE, exceto quando há erros bloqueantes (VERMELHO/desabilitado)
+  // Botão de confirmação: VERDE quando válido; sem fundo quando há erros bloqueantes
   const ACCENT = hasErrors ? RED : GREEN;
-  const ACCENT_HOVER = GREEN_HOVER;
 
   useEffect(() => {
     if (open && !loading) {
@@ -382,7 +381,7 @@ export default function ConfirmImportModal({
         {/* Cabeçalho */}
         <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
           <div className="flex items-center gap-2">
-            <FileSpreadsheet className="h-4 w-4" style={{ color: ACCENT }} />
+            <FileXls className="h-4 w-4" style={{ color: ACCENT }} />
             <DialogTitle className="text-base font-semibold text-white sm:text-lg">{titulo}</DialogTitle>
           </div>
           <p className="mt-1 text-[11px] text-neutral-500">{targetLabel}</p>
@@ -393,16 +392,13 @@ export default function ConfirmImportModal({
           {/* Resumo do arquivo */}
           <div>
             <SectionHeader
-              icon={<ClipboardList className="h-3.5 w-3.5" />}
+              icon={<ClipboardText className="h-3.5 w-3.5" />}
               title="Resumo da importação"
               description={texto}
             />
             <div className="flex items-center gap-2 border border-neutral-800 px-3 py-2">
               <span className="text-[11px] text-neutral-500">O arquivo contém</span>
-              <span
-                className="border px-2 py-0.5 text-[11px] font-semibold"
-                style={{ borderColor: "#1a8ceb40", color: "#1a8ceb", backgroundColor: "#1a8ceb14" }}
-              >
+              <span className="border border-[var(--accent-blue)]/40 bg-[var(--accent-blue)]/10 px-2 py-0.5 text-[11px] font-semibold text-[var(--accent-blue)]">
                 {count} {count === 1 ? "registro" : "registros"}
               </span>
               {preview.length > 0 && preview.length < count && (
@@ -435,7 +431,7 @@ export default function ConfirmImportModal({
               <div className="my-5 h-px bg-neutral-900" />
               <div>
                 <SectionHeader
-                  icon={<FileSpreadsheet className="h-3.5 w-3.5" />}
+                  icon={<FileXls className="h-3.5 w-3.5" />}
                   title="Pré-visualização"
                   description="Amostra dos dados que serão processados"
                 />
@@ -462,7 +458,7 @@ export default function ConfirmImportModal({
               e.stopPropagation();
               handleOpenChange(false);
             }}
-            className="flex h-11 w-full items-center justify-center border border-neutral-800 text-sm text-white transition-colors hover:bg-neutral-900 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto sm:px-6"
+            className="flex h-11 w-full items-center justify-center border border-neutral-800 text-sm text-white transition-colors hover:bg-neutral-900 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)] sm:h-10 sm:w-auto sm:px-6"
           >
             Cancelar
           </button>
@@ -477,21 +473,16 @@ export default function ConfirmImportModal({
             title={hasErrors ? "Corrija os erros para continuar" : undefined}
             className={`
               flex h-11 w-full items-center justify-center gap-2 border text-sm font-medium
-              transition-colors sm:h-10 sm:w-auto sm:px-6
+              transition-[filter,colors] duration-150 sm:h-10 sm:w-auto sm:px-6
+              focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white
               disabled:cursor-not-allowed disabled:opacity-50
-              ${canConfirm ? "cursor-pointer" : ""}
+              ${canConfirm ? "cursor-pointer text-white hover:brightness-110" : ""}
             `}
-            style={canConfirm ? { backgroundColor: ACCENT, borderColor: ACCENT } : undefined}
-            onMouseEnter={(e) => {
-              if (canConfirm) (e.currentTarget as HTMLButtonElement).style.backgroundColor = ACCENT_HOVER;
-            }}
-            onMouseLeave={(e) => {
-              if (canConfirm) (e.currentTarget as HTMLButtonElement).style.backgroundColor = ACCENT;
-            }}
+            style={canConfirm ? { backgroundColor: GREEN, borderColor: GREEN } : undefined}
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <SpinnerGap className="h-4 w-4 animate-spin" />
                 Importando...
               </>
             ) : hasErrors ? (

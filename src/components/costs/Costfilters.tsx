@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, X, ChevronDown, Check } from "lucide-react";
+import { SpinnerGap, X, CaretDown, Check } from "@phosphor-icons/react";
 import {
   CostFilters as CostFiltersType,
   DEFAULT_COST_FILTERS,
@@ -53,8 +53,8 @@ const inputClass = `
   bg-[#0a0a0a]
   text-sm text-white
   placeholder:text-neutral-500
-  focus-visible:border-[#1a8ceb]/60
-  focus-visible:ring-1 focus-visible:ring-[#1a8ceb]/40
+  focus-visible:border-[var(--accent-blue)]/60
+  focus-visible:ring-1 focus-visible:ring-[var(--accent-blue-soft)]
 `;
 
 const selectTriggerClass = `
@@ -62,8 +62,8 @@ const selectTriggerClass = `
   border border-neutral-800 bg-[#0a0a0a]
   px-3 text-left text-sm text-white
   outline-none transition-colors
-  focus:border-[#1a8ceb]/60 focus:ring-0
-  focus-visible:ring-1 focus-visible:ring-[#ffffff]/40
+  focus:border-[var(--accent-blue)]/60 focus:ring-0
+  focus-visible:ring-1 focus-visible:ring-white/40
 `;
 
 const norm = (v: string) => v.trim().toLocaleLowerCase("pt-BR");
@@ -167,7 +167,7 @@ function BrandMultiSelect({
           flex min-h-10 w-full cursor-text flex-wrap items-center gap-1.5
           rounded-none border bg-[#0a0a0a] px-2 py-1.5
           transition-colors
-          ${open ? "border-[#1a8ceb]/60" : "border-neutral-800 hover:border-neutral-700"}
+          ${open ? "border-[var(--accent-blue)]/60" : "border-neutral-800 hover:border-neutral-700"}
         `}
       >
         {selectedBrands.map((brand) => (
@@ -181,8 +181,8 @@ function BrandMultiSelect({
             title={`Remover ${brand}`}
             aria-label={`Remover ${brand}`}
             className="
-              flex cursor-pointer items-center gap-1 border border-[#1a8ceb]/40
-              bg-[#1a8ceb]/10 px-2 py-0.5 text-[12px] text-[#1a8ceb] transition-colors hover:bg-[#1a8ceb]/20
+              flex cursor-pointer items-center gap-1 border border-[var(--accent-blue)]/40
+              bg-[var(--accent-blue)]/10 px-2 py-0.5 text-[12px] text-[var(--accent-blue)] transition-colors hover:bg-[var(--accent-blue)]/20
             "
           >
             {brand}
@@ -214,7 +214,7 @@ function BrandMultiSelect({
           </button>
         )}
 
-        <ChevronDown
+        <CaretDown
           className={`h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform ${
             open ? "rotate-180" : ""
           }`}
@@ -243,14 +243,16 @@ function BrandMultiSelect({
                   className={`
                     flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2 text-left text-[13px]
                     transition-colors hover:bg-neutral-900
-                    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
-                    ${checked ? "text-[#1a8ceb]" : "text-neutral-300"}
+                    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+                    ${checked ? "text-[var(--accent-blue)]" : "text-neutral-300"}
                   `}
                 >
                   <span className="flex items-center gap-2 truncate">
                     <span
                       className={`h-3 w-3 shrink-0 border ${
-                        checked ? "border-[#1a8ceb] bg-[#1a8ceb]" : "border-neutral-700"
+                        checked
+                          ? "border-[var(--accent-blue)] bg-[var(--accent-blue)]"
+                          : "border-neutral-700"
                       }`}
                     />
                     <span className="truncate">{brand}</span>
@@ -323,8 +325,8 @@ export default function CostFilters({
     [&_svg]:hidden
     ${
       isActive
-        ? "text-[#1a8ceb] data-[state=checked]:text-[#1a8ceb]"
-        : "text-[#ffffff]/70 hover:text-[#1a8ceb]"
+        ? "text-[var(--accent-blue)] data-[state=checked]:text-[var(--accent-blue)]"
+        : "text-white/70 hover:text-[var(--accent-blue)]"
     }
   `;
 
@@ -429,7 +431,7 @@ export default function CostFilters({
                   flex h-9 cursor-pointer items-center gap-1.5 px-3
                   text-[13px] text-neutral-500
                   transition-colors hover:text-white
-                  focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
+                  focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
                   disabled:cursor-not-allowed disabled:opacity-50
                 "
               >
@@ -445,17 +447,17 @@ export default function CostFilters({
               className="
                 flex h-9 min-w-[120px] cursor-pointer items-center justify-center gap-2
                 rounded-none
-                border border-[#1a8ceb] bg-[#1a8ceb]
+                border border-[var(--accent-blue)] bg-[var(--accent-blue)]
                 px-5 text-sm font-medium text-white
                 transition-colors duration-150
-                hover:bg-[#1579d1] hover:border-[#1579d1]
+                hover:bg-[var(--accent-blue)]/90 hover:border-[var(--accent-blue)]/90
                 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white
                 active:scale-[0.98]
                 disabled:cursor-not-allowed disabled:opacity-50
               "
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                <SpinnerGap className="h-4 w-4 animate-spin" aria-hidden="true" />
               ) : (
                 "Filtrar"
               )}

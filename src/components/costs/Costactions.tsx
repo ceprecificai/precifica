@@ -2,16 +2,16 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Download,
-  FileSpreadsheet,
-  FileDownIcon,
+  DownloadSimple,
+  FileXls,
+  FilePlus,
+  CaretDown,
+  CaretUp,
+  UploadSimple,
   Plus,
-  ChevronDown,
-  ChevronUp,
-  Upload,
   Power,
-  PowerOff,
-} from "lucide-react";
+  PowerIcon,
+} from "@phosphor-icons/react";
 import { unlockAudio } from "@/utils/sound";
 import TableInfoCard from "@/components/ui/Tableinfocard";
 
@@ -56,12 +56,12 @@ function ActionTextButton({
         aria-label={label}
         className="
           flex h-11 w-full items-center justify-start gap-2
-          border border-[#1a8ceb]
-          bg-[#1a8ceb]
+          border border-[var(--accent-blue)]
+          bg-[var(--accent-blue)]
           px-3
           text-sm font-medium text-white
           transition-colors duration-150
-          hover:bg-[#1579d1] hover:border-[#1579d1]
+          hover:brightness-110
           focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white
           active:scale-[0.99]
           enabled:cursor-pointer disabled:opacity-40
@@ -86,12 +86,12 @@ function ActionTextButton({
         text-left text-[13px] text-neutral-300
         transition-colors duration-150
         hover:border-neutral-800 hover:bg-neutral-900/60 hover:text-white
-        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
+        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
         active:scale-[0.99]
         disabled:cursor-not-allowed disabled:opacity-40
       "
     >
-      <span className="mt-0.5 shrink-0 text-neutral-500 group-hover:text-[#1a8ceb]">
+      <span className="mt-0.5 shrink-0 text-neutral-500 group-hover:text-[var(--accent-blue)]">
         {icon}
       </span>
       <span className="leading-5">{label}</span>
@@ -168,7 +168,7 @@ export default function CostActions({
 
       <div className="space-y-1.5">
         <ActionTextButton icon={<Plus className="h-4 w-4" />} label="Novo Custo" onClick={onOpenCreate} primary />
-        <ActionTextButton icon={<Download className="h-4 w-4" />} label="Exportar dados para planilha" onClick={handleExport} disabled={exporting} />
+        <ActionTextButton icon={<DownloadSimple className="h-4 w-4" />} label="Exportar dados para planilha" onClick={handleExport} disabled={exporting} />
 
         {showStatusActions && (
           <div className="mt-3 border-t border-neutral-900 pt-3">
@@ -179,7 +179,7 @@ export default function CostActions({
             <div className="space-y-0.5">
               {onDeactivateSelected && (
                 <ActionTextButton
-                  icon={<PowerOff className="h-4 w-4" />}
+                  icon={<PowerIcon className="h-4 w-4" />}
                   label={togglingActive ? "Desativando..." : "Desativar selecionados"}
                   onClick={onDeactivateSelected}
                   disabled={!hasSelection || togglingActive || exporting}
@@ -209,12 +209,12 @@ export default function CostActions({
               text-[11px] font-semibold uppercase tracking-[0.15em]
               text-neutral-500
               transition-colors
-              hover:text-[#1a8ceb]
-              focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
+              hover:text-[var(--accent-blue)]
+              focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
             "
           >
             Mais opções
-            {showMoreOptions ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            {showMoreOptions ? <CaretUp className="h-3.5 w-3.5" /> : <CaretDown className="h-3.5 w-3.5" />}
           </button>
 
           {showMoreOptions && (
@@ -223,15 +223,15 @@ export default function CostActions({
                 Planilhas
               </div>
 
-              <ActionTextButton icon={<FileDownIcon className="h-4 w-4" />} label="Baixar planilha modelo de inclusão" onClick={onExportModeloInclusao} />
-              <ActionTextButton icon={<FileSpreadsheet className="h-4 w-4" />} label="Baixar planilha modelo de alteração" onClick={onExportModeloAlteracao} />
-              <ActionTextButton icon={<FileSpreadsheet className="h-4 w-4" />} label="Exportar planilha para renomear códigos" onClick={onExportRenomeacaoCodigos} disabled={exporting} />
+              <ActionTextButton icon={<FilePlus className="h-4 w-4" />} label="Baixar planilha modelo de inclusão" onClick={onExportModeloInclusao} />
+              <ActionTextButton icon={<FileXls className="h-4 w-4" />} label="Baixar planilha modelo de alteração" onClick={onExportModeloAlteracao} />
+              <ActionTextButton icon={<FileXls className="h-4 w-4" />} label="Exportar planilha para renomear códigos" onClick={onExportRenomeacaoCodigos} disabled={exporting} />
 
               <div className="my-1 border-t border-neutral-900" />
 
-              <ActionTextButton icon={<Upload className="h-4 w-4" />} label="Importar dados de inclusão" onClick={() => triggerFileInput(inputInclusaoRef)} />
-              <ActionTextButton icon={<Upload className="h-4 w-4" />} label="Importar dados de alteração" onClick={() => triggerFileInput(inputAlteracaoRef)} />
-              <ActionTextButton icon={<Upload className="h-4 w-4" />} label="Importar renomeação de códigos" onClick={() => triggerFileInput(inputRenomeacaoCodigosRef)} />
+              <ActionTextButton icon={<UploadSimple className="h-4 w-4" />} label="Importar dados de inclusão" onClick={() => triggerFileInput(inputInclusaoRef)} />
+              <ActionTextButton icon={<UploadSimple className="h-4 w-4" />} label="Importar dados de alteração" onClick={() => triggerFileInput(inputAlteracaoRef)} />
+              <ActionTextButton icon={<UploadSimple className="h-4 w-4" />} label="Importar renomeação de códigos" onClick={() => triggerFileInput(inputRenomeacaoCodigosRef)} />
             </div>
           )}
         </div>
