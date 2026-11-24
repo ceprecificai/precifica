@@ -49,29 +49,15 @@ type CostItemRowProps = {
   toDisplay: (v: string) => string;
   toInternal: (v: string) => string;
 
-  // Necessário para fechar dropdown instantaneamente
-  setSugestoes?: any;
-  setCampoAtivo?: any;
+  // Opcionais: permitem fechar o dropdown ao limpar o campo
+  setSugestoes?: (value: Sugestao[]) => void;
+  setCampoAtivo?: (value: number | null) => void;
 };
 
-const getRowTitle = (item: any) => {
-  const codigo = String(item?.codigo || "").trim();
-
-  if (codigo) return codigo;
-
-  if (item?.descricao) return item.descricao;
-  if (item?.produto) return item.produto;
-  if (item?.nome) return item.nome;
-  if (item?.label) return item.label;
-
-  return "Novo custo";
-};
-
-const getRowDescription = (item: any) => {
+const getRowDescription = (item: any): string => {
   if (item?.produto) return item.produto;
   if (item?.descricao) return item.descricao;
   if (item?.nome) return item.nome;
-
   return "";
 };
 
@@ -112,26 +98,16 @@ export const CostItemRow: React.FC<CostItemRowProps> = ({
   setSugestoes,
   setCampoAtivo,
 }) => {
-  const title = getRowTitle(item);
   const description = getRowDescription(item);
   const percent = isPercentItem(item);
+  const codigoTexto = String(item?.codigo || "");
+  const temTexto = codigoTexto.trim() !== "";
 
   return (
     <div className="group flex items-center gap-2 py-1.5">
-      {/* Título / descrição + código (mobile) */}
+      {/* Código (busca) + descrição */}
       <div className="relative min-w-0 flex-1">
-        <span className="block truncate whitespace-nowrap text-sm font-medium text-neutral-900">
-          {title}
-        </span>
-
-        {description && description !== title && (
-          <span className="block truncate whitespace-nowrap text-xs text-neutral-500">
-            {description}
-          </span>
-        )}
-
-        {/* Código editável apenas no mobile */}
-        <div className="relative mt-1 sm:hidden">
+        <div className="relative">
           <Input
             ref={(el) => {
               if (!inputRefs.current[idx]) inputRefs.current[idx] = [];
@@ -140,7 +116,7 @@ export const CostItemRow: React.FC<CostItemRowProps> = ({
             type="text"
             inputMode="text"
             placeholder="Código do custo"
-            value={item.codigo || ""}
+            value={codigoTexto}
             onChange={(e) => {
               const value = e.target.value;
 
@@ -166,16 +142,22 @@ export const CostItemRow: React.FC<CostItemRowProps> = ({
           />
 
           <SuggestionDropdown
-            isActive={campoAtivo === idx}
+            isActive={campoAtivo === idx && temTexto}
             sugestoes={sugestoes}
             listaRef={listaRef}
             indiceSelecionado={indiceSelecionado}
             onSelect={(codigo, custo, produto, marca) =>
               selecionarSugestao(codigo, custo, idx, produto, marca)
             }
-            termoBusca={item.codigo || ""}
+            termoBusca={codigoTexto}
           />
         </div>
+
+        {description && (
+          <span className="mt-0.5 block truncate whitespace-nowrap px-2 text-xs text-neutral-500">
+            {description}
+          </span>
+        )}
       </div>
 
       {/* Quantidade */}
