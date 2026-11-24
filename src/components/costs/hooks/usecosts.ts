@@ -282,10 +282,26 @@ async function fetchCostsPage(
   pageSize: number,
   signal?: AbortSignal
 ): Promise<FetchResult> {
+  console.log("[useCosts] fetchCostsPage início", {
+    page,
+    pageSize,
+    situacao: params.appliedFilters.situacao,
+    ordem: params.ordem,
+    sortColumn: params.sortColumn,
+    marcas: params.appliedSelectedBrands,
+  });
+
   // Sem sessão, o RLS (role authenticated) devolve [] silenciosamente.
   // Falhar aqui deixa o motivo visível em vez de uma tabela vazia.
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  console.log("[useCosts] sessão", {
+    existe: !!sessionData?.session,
+    usuario: sessionData?.session?.user?.email,
+    sessionError,
+  });
+
   if (sessionError || !sessionData.session) {
+    console.error("[useCosts] ERRO: sessão ausente", sessionError);
     throw new Error("Sessão não encontrada. Faça login novamente para ver os custos.");
   }
 
@@ -305,8 +321,24 @@ async function fetchCostsPage(
 
   const [countRes, dataRes] = await Promise.all([countQuery, dataQuery]);
 
-  if (countRes.error) throw countRes.error;
-  if (dataRes.error) throw dataRes.error;
+  console.log("[useCosts] count", {
+    count: countRes.count,
+    error: countRes.error,
+  });
+  console.log("[useCosts] data", {
+    linhas: dataRes.data?.length ?? null,
+    error: dataRes.error,
+    primeiraLinha: dataRes.data?.[0],
+  });
+
+  if (countRes.error) {
+    console.error("[useCosts] ERRO no count", countRes.error);
+    throw countRes.error;
+  }
+  if (dataRes.error) {
+    console.error("[useCosts] ERRO no data", dataRes.error);
+    throw dataRes.error;
+  }
 
   return {
     rows: (dataRes.data || []).map(mapRowToUI),
@@ -499,6 +531,17 @@ export function useCosts() {
   const rows = data?.rows ?? [];
   const totalItems = data?.totalCount ?? 0;
   const loading = isLoading || isFetching;
+
+  useEffect(() => {
+    console.log("[useCosts] estado da query", {
+      isLoading,
+      isFetching,
+      linhasNaPagina: rows.length,
+      totalItems,
+      currentPage,
+      itemsPerPage,
+    });
+  }, [isLoading, isFetching, rows.length, totalItems, currentPage, itemsPerPage]);
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   /* ── Prefetch preditivo da próxima página ───────────────────── */
@@ -705,6 +748,8 @@ export function useCosts() {
       );
       return;
     }
+
+    console.log("[useCosts] marcas RPC", { quantidade: data?.length ?? 0 });
 
     const brands = (data || [])
       .map((r: any) => String(r.mark ?? "").trim())
