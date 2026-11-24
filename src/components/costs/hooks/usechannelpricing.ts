@@ -1,0 +1,418 @@
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { CHANNELS, EMBALAGEM_PADRAO } from "@/components/costs/hooks/channelsconfig";
+import type { ChannelKey } from "@/components/costs/hooks/channelsconfig";
+import { resolveRuleForChannel } from "@/components/costs/hooks/ruleresolvers";
+import { usebrandpricingoverrides } from "@/components/costs/hooks/usebrandpricingoverrides";
+import { loadMarketplaceChannelRule } from "@/components/costs/hooks/usepricingrules";
+import type { Calculo } from "@/components/pricing/PricingCalculatorModern";
+
+// Imposto agora é constante fixa por empresa (10% Sóbaquetas / 14% Pikot),
+// controlada em PriceCalculationSection.tsx. Aqui só precisamos travar
+// edição manual do usuário, igual comissão/frete/embalagem.
+export type ManualFlags = {
+  comissao: boolean;
+  frete: boolean;
+  embalagem: boolean;
+  imposto: boolean;
+};
+
+// Imposto SAIU do sistema de brand overrides (não é regra de marca).
+// Desconto ENTROU.
+export type BrandRuleField = "marketing" | "margem" | "desconto";
+
+export type BrandOverrides = {
+  flags: { marketing: boolean; margem: boolean; desconto: boolean };
+  setEdited: (field: BrandRuleField, value: boolean) => void;
+  resetFlags: () => void;
+};
+
+const emptyManualFlags = (): ManualFlags => ({
+  comissao: false,
+  frete: false,
+  embalagem: false,
+  imposto: false,
+});
+
+// =====================
+// Defaults estáticos calculados uma única vez (CHANNELS não muda em runtime).
+// Evita recriar os mesmos objetos via .map() em toda chamada de
+// resetAll/resetManualState e na inicialização dos useState.
+//
+// embalagem SEMPRE nasce vazia ("") — nunca fixa em c.defaults.embalagem.
+// Modo "banco" foi REMOVIDO: embalagem é custo de pacote/anúncio, não
+// de item da composição — somar packaging_cost por item*quantidade
+// inflava o custo em anúncios com múltiplos produtos. Agora existem
+// só 2 modos: 1) Fixo (fallback EMBALAGEM_PADRAO quando o campo está
+// vazio), 2) Manual (usuário digita, manualFlags trava o valor).
+//
+// O preenchimento do fallback fixo é feito pelo useEffect "Engine de
+// embalagem" abaixo — SEM ele, o campo ficava vazio na tela pra
+// sempre, mesmo influenciando o preço internamente.
+// =====================
+const DEFAULT_CALCULOS = Object.fromEntries(
+  CHANNELS.map((c) => [c.key, { ...c.defaults, embalagem: "" }])
+) as Record<ChannelKey, Calculo>;
+
+const RESET_CALCULOS = DEFAULT_CALCULOS;
+
+const DEFAULT_MANUAL_FLAGS = Object.fromEntries(
+  CHANNELS.map((c) => [c.key, emptyManualFlags()])
+) as Record<ChannelKey, ManualFlags>;
+
+const EMPTY_DB_RULES = Object.fromEntries(
+  CHANNELS.map((c) => [c.key, null])
+) as Record<ChannelKey, any | null>;
+
+const CHANNELS_WITH_RULE = CHANNELS.filter((c) => c.dbRuleName);
+
+// =====================
+// Cache em módulo das regras de banco por canal (dbRules).
+// Diferente das regras de marca, estas NÃO dependem de `produtoMarca` —
+// são fixas por canal. Sem cache, toda montagem do hook (ex: reabrir o
+// modal da calculadora) refazia N requisições ao banco pra buscar
+// exatamente os mesmos dados. Warm-up disparado no module scope: o fetch
+// já começa antes do primeiro render do componente que usa este hook.
+// =====================
+let dbRulesCache: Promise<Record<ChannelKey, any | null>> | null = null;
+
+function loadAllDbRules(): Promise<Record<ChannelKey, any | null>> {
+  if (dbRulesCache) return dbRulesCache;
+
+  dbRulesCache = Promise.all(
+    CHANNELS_WITH_RULE.map((c) => loadMarketplaceChannelRule(c.dbRuleName!))
+  )
+    .then((results) => {
+      const map = { ...EMPTY_DB_RULES };
+      CHANNELS_WITH_RULE.forEach((c, i) => {
+        map[c.key] = results[i] ?? null;
+      });
+      return map;
+    })
+    .catch((err) => {
+      dbRulesCache = null; // permite retry numa próxima montagem
+      throw err;
+    });
+
+  return dbRulesCache;
+}
+
+// =====================
+// Invalida o cache em módulo das regras de banco.
+// =====================
+export function invalidateDbRulesCache() {
+  dbRulesCache = null;
+}
+
+// =====================
+// NOVO: Pub/sub global para notificar TODAS as instâncias montadas
+// do hook quando uma regra é salva em outro lugar da aplicação (ex:
+// CreateChannelModal, que não tem acesso direto a este hook, pois
+// vive em outra árvore de componentes / outra tela).
+// -----------------------------------------------------------------
+// Sem isso, invalidar o cache não bastava: uma instância do hook já
+// montada (ex: calculadora aberta em outra aba) continuava exibindo
+// `dbRules` antigo em memória até um unmount/remount ou reload de
+// página — essa era a causa raiz real de "só funciona com reload"
+// quando a regra é salva por uma tela diferente da calculadora.
+// =====================
+type DbRulesMap = Record<ChannelKey, any | null>;
+const dbRulesSubscribers = new Set<(map: DbRulesMap) => void>();
+
+export function invalidateAndRefetchDbRules(): Promise<DbRulesMap> {
+  invalidateDbRulesCache();
+
+  return loadAllDbRules().then((map) => {
+    dbRulesSubscribers.forEach((callback) => callback(map));
+    return map;
+  });
+}
+
+// Warm-up antecipado: dispara o fetch assim que o módulo é importado,
+// não quando o componente monta. Ignora erro aqui — o efeito no hook
+// trata a falha e mantém fallback hardcoded.
+loadAllDbRules().catch(() => {});
+
+export function useChannelPricing(
+  produtoMarca: string,
+  calcularPreco: (c: Calculo) => number
+) {
+  const [calculos, setCalculos] = useState<Record<ChannelKey, Calculo>>(
+    () => ({ ...DEFAULT_CALCULOS })
+  );
+
+  const setCalculo = useCallback(
+    (key: ChannelKey, updater: (prev: Calculo) => Calculo) => {
+      setCalculos((prev) => ({ ...prev, [key]: updater(prev[key]) }));
+    },
+    []
+  );
+
+  const [manualFlags, setManualFlagsState] = useState<
+    Record<ChannelKey, ManualFlags>
+  >(() => ({ ...DEFAULT_MANUAL_FLAGS }));
+
+  const setManualFlag = useCallback(
+    (key: ChannelKey, field: keyof ManualFlags, value: boolean) => {
+      setManualFlagsState((prev) => ({
+        ...prev,
+        [key]: { ...prev[key], [field]: value },
+      }));
+    },
+    []
+  );
+
+  // =====================
+  // Brand overrides — um hook por canal (CHANNELS é estático, então
+  // chamar o hook em loop fixo é seguro quanto a rules-of-hooks).
+  // Imposto NÃO entra mais aqui — é constante fixa por empresa.
+  // Cada `hook` já vem memoizado internamente (usebrandpricingoverrides
+  // usa useMemo no retorno), então `brandOverrides` só muda de referência
+  // quando algum canal realmente mudou de estado.
+  // =====================
+  const shoppingBrandOverrides = {} as Record<ChannelKey, BrandOverrides>;
+
+  for (const def of CHANNELS) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const hook = usebrandpricingoverrides(
+      produtoMarca,
+      (updater: (prev: Calculo) => Calculo) => setCalculo(def.key, updater),
+      {
+        marketing: def.defaults.marketing,
+        margem: def.defaults.margem,
+        desconto: def.defaults.desconto,
+      }
+    );
+
+    shoppingBrandOverrides[def.key] = hook;
+  }
+
+  const brandOverrides = shoppingBrandOverrides;
+
+  // =====================
+  // Regras salvas no banco por canal — busca via cache em módulo.
+  // =====================
+  const [dbRules, setDbRules] = useState<Record<ChannelKey, any | null>>(
+    () => ({ ...EMPTY_DB_RULES })
+  );
+
+  useEffect(() => {
+    let active = true;
+
+    loadAllDbRules()
+      .then((map) => {
+        if (active) setDbRules(map);
+      })
+      .catch(() => {
+        // Mantém fallback hardcoded sem quebrar a calculadora.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // =====================
+  // NOVO: assina o pub/sub global. Qualquer chamada a
+  // `invalidateAndRefetchDbRules()` feita em QUALQUER lugar da
+  // aplicação (ex: CreateChannelModal, ao salvar regras de um canal)
+  // atualiza automaticamente o `dbRules` desta instância — mesmo que
+  // ela tenha sido montada antes da regra ser salva, e mesmo que
+  // esteja em uma tela/aba diferente de onde a regra foi salva.
+  // =====================
+  useEffect(() => {
+    const callback = (map: Record<ChannelKey, any | null>) => setDbRules(map);
+    dbRulesSubscribers.add(callback);
+    return () => {
+      dbRulesSubscribers.delete(callback);
+    };
+  }, []);
+
+  // =====================
+  // Refetch manual das regras de banco.
+  // -----------------------------------------------------------------
+  // Invalida o cache em módulo e refaz o fetch imediatamente,
+  // atualizando `dbRules` neste hook (e em qualquer outra instância
+  // montada, via pub/sub acima, já que o cache é global). Deve ser
+  // chamado no `onApplied` do ChannelPricingRulesModal, assim que uma
+  // regra for salva — elimina a necessidade de reload de página para
+  // a calculadora refletir a nova regra (flat/tiered/brand).
+  // =====================
+  const refetchDbRules = useCallback(() => {
+    invalidateAndRefetchDbRules().catch(() => {
+      // Mantém dbRules atual em caso de erro no refetch.
+    });
+  }, []);
+
+  // =====================
+  // Engine de embalagem — resolve os 2 modos restantes (Fixo > Manual)
+  // e ESCREVE o valor resolvido de volta no estado `calculos`.
+  // -----------------------------------------------------------------
+  // Modo "banco" (packaging_cost * quantidade por item da composição)
+  // foi REMOVIDO: embalagem é custo do pacote/anúncio como um todo,
+  // não da soma dos itens dentro dele.
+  //
+  // - Canal com manualFlags[key].embalagem = true → pulado, preserva
+  //   o valor digitado pelo usuário.
+  // - Caso contrário → aplica EMBALAGEM_PADRAO.
+  //
+  // Segue o mesmo padrão do engine de comissão/frete: 1 único efeito,
+  // 1 única atualização de estado por ciclo.
+  // =====================
+  useEffect(() => {
+    setCalculos((prevCalculos) => {
+      let changed = false;
+      const next = { ...prevCalculos };
+
+      for (const def of CHANNELS) {
+        const flags = manualFlags[def.key];
+
+        if (flags.embalagem) continue;
+
+        if (prevCalculos[def.key].embalagem !== EMBALAGEM_PADRAO) {
+          next[def.key] = {
+            ...prevCalculos[def.key],
+            embalagem: EMBALAGEM_PADRAO,
+          };
+          changed = true;
+        }
+      }
+
+      return changed ? next : prevCalculos;
+    });
+  }, [manualFlags]);
+
+  // =====================
+  // Engine única de regra automática de comissão/frete.
+  // -----------------------------------------------------------------
+  // ANTES: 1 useEffect por canal (até 6 efeitos), cada um disparando
+  // seu próprio setCalculo — até 6 setState + 6 commits do React em
+  // sequência sempre que dbRules/produtoMarca mudavam.
+  //
+  // AGORA: 1 único efeito processa todos os canais e faz UMA única
+  // atualização de estado (batched), reduzindo drasticamente o número
+  // de re-renders.
+  // =====================
+  useEffect(() => {
+    setCalculos((prevCalculos) => {
+      let changed = false;
+      const next = { ...prevCalculos };
+
+      for (const def of CHANNELS) {
+        if (!def.allowManualComissaoFrete) continue;
+
+        const rule = dbRules[def.key];
+        const calc = prevCalculos[def.key];
+        const flags = manualFlags[def.key];
+        const embalagemOverride =
+          flags.embalagem && calc.embalagem ? calc.embalagem : null;
+
+        const resolved = resolveRuleForChannel(
+          def,
+          rule,
+          produtoMarca,
+          calc,
+          calcularPreco,
+          embalagemOverride
+        );
+
+        if (!resolved) continue;
+
+        const updated: Calculo = {
+          ...calc,
+          comissao: flags.comissao ? calc.comissao : resolved.comissao,
+          frete: flags.frete ? calc.frete : resolved.frete,
+        };
+
+        if (
+          updated.comissao !== calc.comissao ||
+          updated.frete !== calc.frete
+        ) {
+          next[def.key] = updated;
+          changed = true;
+        }
+      }
+
+      return changed ? next : prevCalculos;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dbRules, produtoMarca, manualFlags, calcularPreco]);
+
+  // =====================
+  // Preços calculados
+  // -----------------------------------------------------------------
+  // Memoizado — só recalcula quando `calculos` realmente muda (ou a
+  // função `calcularPreco`, que é estável via useCallback no componente
+  // pai).
+  // =====================
+  const precos = useMemo(
+    () =>
+      Object.fromEntries(
+        CHANNELS.map((c) => [c.key, calcularPreco(calculos[c.key])])
+      ) as Record<ChannelKey, number>,
+    [calculos, calcularPreco]
+  );
+
+  // =====================
+  // Reset de flags manuais + overrides de marca (chamado ao trocar
+  // produto/composição).
+  // -----------------------------------------------------------------
+  // FIX (conflito anúncio vs. regra de marca): este reset é disparado
+  // toda vez que a composição/produtoMarca muda (ver useEffect em
+  // PricingCalculatorModern.tsx). Antes, ele zerava TODAS as flags —
+  // incluindo `comissao`/`frete`, que o AnnounceRateSearch trava como
+  // manuais (manualFlags.comissao/frete = true) ao aplicar a taxa de
+  // um anúncio específico do Mercado Livre.
+  //
+  // Resultado do bug: usuário selecionava o anúncio (comissão/frete
+  // corretos) → adicionava um item de custo → este reset zerava as
+  // flags → o engine de regra automática (useEffect acima) voltava a
+  // sobrescrever comissão/frete com a regra da marca, mesmo sendo a
+  // mesma marca/produto.
+  //
+  // FIX: `comissao` e `frete` NÃO são mais resetados aqui. Eles só
+  // voltam ao modo automático via `resetAll` (botão "Limpar tudo") ou
+  // quando o próprio usuário decide destravar o campo manualmente.
+  // `embalagem` continua sendo resetado normalmente, pois seu ciclo de
+  // vida é por composição (não por anúncio).
+  // =====================
+  const resetManualState = useCallback(() => {
+    setManualFlagsState((prev) => {
+      const next = { ...prev };
+
+      for (const key of Object.keys(next) as ChannelKey[]) {
+        next[key] = {
+          ...next[key],
+          embalagem: false,
+          // comissao e frete preservados de propósito — ver comentário acima.
+        };
+      }
+
+      return next;
+    });
+
+    CHANNELS.forEach((c) => brandOverrides[c.key].resetFlags());
+  }, [brandOverrides]);
+
+  // =====================
+  // Reset total (botão "Limpar tudo") — aqui SIM zera comissao/frete,
+  // já que a intenção explícita do usuário é limpar toda a calculadora.
+  // =====================
+  const resetAll = useCallback(() => {
+    setCalculos({ ...RESET_CALCULOS });
+    setManualFlagsState({ ...DEFAULT_MANUAL_FLAGS });
+    CHANNELS.forEach((c) => brandOverrides[c.key].resetFlags());
+  }, [brandOverrides]);
+
+  return {
+    calculos,
+    setCalculo,
+    setCalculos,
+    manualFlags,
+    setManualFlag,
+    brandOverrides,
+    precos,
+    resetAll,
+    resetManualState,
+    refetchDbRules,
+  };
+}
