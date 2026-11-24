@@ -41,7 +41,9 @@ import {
 // getCostKey agora vem de utils.ts; reexportada para quem já importava daqui
 export { getCostKey };
 
-const SCHEMA = "newsystem";
+// Tabela "costs" está em public (ver DDL). Confirme que announce,
+// pricing_rules e get_distinct_marks também existem neste schema.
+const SCHEMA = "public";
 
 export type RenameCodePreviewItem = {
   linha?: number;
