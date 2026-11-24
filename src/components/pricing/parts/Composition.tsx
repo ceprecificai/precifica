@@ -104,7 +104,7 @@ export const CostComposition: React.FC<CostCompositionProps> = ({
         {composicao.length > 0 ? (
           composicao.map((item, idx) => (
             <CostItemRow
-              key={`${item.codigo || "item"}-${idx}`}
+              key={idx}
               item={item}
               idx={idx}
               composicao={composicao}
