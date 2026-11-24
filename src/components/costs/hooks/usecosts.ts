@@ -272,6 +272,8 @@ function buildFiltersKey(params: CostsQueryParams) {
 
 /* ─────────────────────────────────────────────
  * FETCH FUNCTION — usada pelo React Query
+ * Acesso anônimo liberado: a sessão não é mais exigida aqui.
+ * Logs de diagnóstico mantidos para identificar erros e resultados.
  * ───────────────────────────────────────────── */
 
 type FetchResult = { rows: Custo[]; totalCount: number };
@@ -290,20 +292,6 @@ async function fetchCostsPage(
     sortColumn: params.sortColumn,
     marcas: params.appliedSelectedBrands,
   });
-
-  // Sem sessão, o RLS (role authenticated) devolve [] silenciosamente.
-  // Falhar aqui deixa o motivo visível em vez de uma tabela vazia.
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  console.log("[useCosts] sessão", {
-    existe: !!sessionData?.session,
-    usuario: sessionData?.session?.user?.email,
-    sessionError,
-  });
-
-  if (sessionError || !sessionData.session) {
-    console.error("[useCosts] ERRO: sessão ausente", sessionError);
-    throw new Error("Sessão não encontrada. Faça login novamente para ver os custos.");
-  }
 
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
