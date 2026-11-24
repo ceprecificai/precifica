@@ -182,14 +182,27 @@ async function buscarPorColuna(
     };
   }
 
-  const { data, error } = await supabase
-    .schema("newsystem")
-    .rpc("search_costs_column", {
-      p_column: coluna,
-      p_term: raw,
-      p_limit: limit,
-    })
+  const { data: rows, error } = await supabase
+    .schema("public")
+    .from("costs")
+    .select("code, product, mark, current_cost")
+    .is("deleted_at", null)
+    .ilike(coluna, `%${raw}%`)
+    .order(coluna, { ascending: true })
+    .limit(limit)
     .abortSignal(signal);
+
+  if (error && !signal.aborted) {
+    console.error("[pricing] busca de custos falhou:", error);
+  }
+
+  const data =
+    rows?.map((r: any) => ({
+      code: r.code,
+      product: r.product,
+      mark: r.mark,
+      current_cost: r.current_cost,
+    })) ?? null;
 
   if (!error && data) {
     setCached(cacheKey, mapResultados(data));
