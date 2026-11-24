@@ -63,6 +63,15 @@ const moneyOrEmpty = (v: unknown) =>
  * UI PEQUENA
  * ───────────────────────────────────────────── */
 
+const LINK_CLASS =
+  "text-neutral-900 font-medium underline decoration-neutral-300 underline-offset-4 transition-colors hover:decoration-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900";
+
+const CHECKBOX_CLASS =
+  "h-3.5 w-3.5 cursor-pointer accent-neutral-900 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900";
+
+const MOBILE_CELL_CLASS =
+  "min-w-0 rounded-none border border-neutral-200 bg-neutral-50 p-2.5";
+
 function ColGroup() {
   return (
     <colgroup>
@@ -76,7 +85,7 @@ function ColGroup() {
 function NewBadge() {
   return (
     <span
-      className="ml-1.5 inline-flex shrink-0 items-center rounded-none border border-[var(--accent-blue)]/40 bg-[var(--accent-blue)]/10 px-1.5 py-[1px] text-[9px] font-semibold uppercase tracking-wide text-[var(--accent-blue)]"
+      className="ml-1.5 inline-flex shrink-0 items-center rounded-none bg-neutral-900 px-1.5 py-[1px] text-[9px] font-semibold uppercase tracking-wide text-white"
       title="Adicionado recentemente"
     >
       Novo
@@ -102,14 +111,14 @@ function IconBtn({
       aria-label={label}
       title={label}
       className={`
-        flex h-8 w-8 items-center justify-center
-        border border-transparent text-neutral-500
+        flex h-8 w-8 items-center justify-center rounded-none
+        border border-transparent text-neutral-400
         transition-colors
-        hover:border-neutral-800 hover:bg-neutral-900
-        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+        hover:border-neutral-200 hover:bg-neutral-100
+        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
         ${
           variant === "edit"
-            ? "hover:text-[var(--accent-blue)]"
+            ? "hover:text-neutral-900"
             : "hover:text-[var(--destructive)]"
         }
       `}
@@ -144,17 +153,17 @@ function CopyBtn({
         aria-label={`Copiar ${label}`}
         title={`Copiar ${label}`}
         className="
-          cursor-pointer opacity-0 transition-opacity
+          cursor-pointer rounded-none opacity-0 transition-opacity
           group-hover:opacity-100
           focus-visible:opacity-100 focus-visible:outline-none
-          focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+          focus-visible:ring-1 focus-visible:ring-neutral-900
         "
       >
         <Copy
-          className={`h-3 w-3 ${
+          className={`h-3 w-3 transition-colors ${
             isCopied
-              ? "text-[var(--accent-blue)]"
-              : "text-neutral-500 hover:text-[var(--accent-blue)]"
+              ? "text-emerald-600"
+              : "text-neutral-400 hover:text-neutral-900"
           }`}
         />
       </button>
@@ -164,8 +173,8 @@ function CopyBtn({
           role="status"
           className="
             absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap
-            border border-[var(--accent-blue)]/40 bg-[#0d0d0d] px-2 py-0.5
-            text-[10px] font-medium text-[var(--accent-blue)] shadow-lg
+            rounded-none bg-neutral-900 px-2 py-0.5
+            text-[10px] font-medium text-white shadow-sm
           "
         >
           Copiado!
@@ -179,9 +188,9 @@ function TableSkeleton() {
   return (
     <>
       {Array.from({ length: 8 }).map((_, i) => (
-        <TableRow key={`skeleton-${i}`} className="border-b border-neutral-900">
+        <TableRow key={`skeleton-${i}`} className="border-b border-neutral-100">
           <TableCell colSpan={COL_COUNT} className="py-2.5">
-            <div className="h-4 w-full animate-pulse bg-neutral-900" />
+            <div className="h-4 w-full animate-pulse rounded-none bg-neutral-100" />
           </TableCell>
         </TableRow>
       ))}
@@ -192,8 +201,12 @@ function TableSkeleton() {
 function EmptyStateContent() {
   return (
     <div className="flex flex-col items-center gap-2 py-14 text-center">
-      <Package className="h-8 w-8 text-neutral-700" aria-hidden="true" />
-      <p className="text-sm text-neutral-400">Nenhum registro encontrado</p>
+      <div className="flex h-9 w-9 items-center justify-center rounded-none border border-neutral-200 bg-neutral-50">
+        <Package className="h-4 w-4 text-neutral-500" aria-hidden="true" />
+      </div>
+      <p className="text-sm font-semibold text-neutral-900">
+        Nenhum registro encontrado
+      </p>
       <p className="text-xs text-neutral-500">
         Tente ajustar os filtros ou limpar a busca.
       </p>
@@ -242,10 +255,10 @@ const CostTableRow = React.memo(function CostTableRow({
 
   return (
     <TableRow
-      className={`group border-b border-neutral-900 transition-colors ${
+      className={`group border-b border-neutral-100 transition-colors ${
         isSelected
-          ? "bg-[var(--accent-blue)]/[0.06] hover:bg-[var(--accent-blue)]/[0.09]"
-          : "hover:bg-neutral-900/40"
+          ? "bg-neutral-50 hover:bg-neutral-100"
+          : "hover:bg-neutral-50/70"
       }`}
     >
       <TableCell className="text-center">
@@ -255,13 +268,13 @@ const CostTableRow = React.memo(function CostTableRow({
           disabled={rowKey === null}
           onChange={(e) => onToggle(row, e.target.checked)}
           aria-label={`Selecionar produto ${codigo}`}
-          className="h-3.5 w-3.5 cursor-pointer accent-[var(--accent-blue)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+          className={CHECKBOX_CLASS}
         />
       </TableCell>
 
-      <TableCell className="text-left text-[13px] text-neutral-300">
+      <TableCell className="text-left text-[13px] text-neutral-700">
         <div className="inline-flex min-w-0 items-center gap-1.5">
-          <span className="truncate">{codigo}</span>
+          <span className="truncate font-medium text-neutral-900">{codigo}</span>
           <CopyBtn
             value={codigo}
             copyKey={`${base}:codigo`}
@@ -272,11 +285,11 @@ const CostTableRow = React.memo(function CostTableRow({
         </div>
       </TableCell>
 
-      <TableCell className="text-left text-[13px] text-neutral-300">
+      <TableCell className="text-left text-[13px] text-neutral-700">
         <span className="block truncate">{row["Marca"] || "-"}</span>
       </TableCell>
 
-      <TableCell className="text-left text-[13px] text-neutral-300">
+      <TableCell className="text-left text-[13px] text-neutral-700">
         <div className="inline-flex max-w-full min-w-0 items-center gap-1.5">
           <span className="min-w-0 truncate">{produto}</span>
           {showNewBadge && <NewBadge />}
@@ -296,7 +309,7 @@ const CostTableRow = React.memo(function CostTableRow({
             type="button"
             onClick={(e) => openCostEditor(row, e, "Custo Atual")}
             aria-label={`Editar custo atual de ${produto}`}
-            className="text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+            className={LINK_CLASS}
           >
             {moneyOrDash(row["Custo Atual"])}
           </button>
@@ -315,13 +328,13 @@ const CostTableRow = React.memo(function CostTableRow({
           type="button"
           onClick={(e) => openCostEditor(row, e, "Custo Antigo")}
           aria-label={`Editar custo antigo de ${produto}`}
-          className="text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+          className={LINK_CLASS}
         >
           {moneyOrDash(row["Custo Antigo"])}
         </button>
       </TableCell>
 
-      <TableCell className="text-left text-[13px] text-neutral-300">
+      <TableCell className="text-left text-[13px] text-neutral-700">
         <div className="inline-flex min-w-0 items-center gap-1.5">
           <span className="truncate">{ncm}</span>
           <CopyBtn
@@ -465,7 +478,7 @@ export default function CostDataTable({
           Array.from({ length: 5 }).map((_, i) => (
             <div
               key={`mskel-${i}`}
-              className="h-28 animate-pulse border border-neutral-900 bg-neutral-950"
+              className="h-28 animate-pulse rounded-none border border-neutral-200 bg-neutral-100"
             />
           ))
         ) : rows.length === 0 ? (
@@ -479,18 +492,18 @@ export default function CostDataTable({
             return (
               <div
                 key={rowKey ?? `row-${i}`}
-                className={`border p-3 transition-colors ${
+                className={`rounded-none border p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors ${
                   isSelected
-                    ? "border-[var(--accent-blue)]/40 bg-[var(--accent-blue)]/[0.05]"
-                    : "border-neutral-800 bg-[#0a0a0a]"
+                    ? "border-neutral-900 bg-neutral-50"
+                    : "border-neutral-200 bg-white"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
                       {c["Marca"] || "-"}
                     </div>
-                    <div className="mt-1 flex min-w-0 items-center gap-1.5 text-sm font-medium text-white">
+                    <div className="mt-1 flex min-w-0 items-center gap-1.5 text-sm font-semibold text-neutral-900">
                       <span className="truncate">{produto}</span>
                       {isRecent(c.created_at) && <NewBadge />}
                     </div>
@@ -502,40 +515,52 @@ export default function CostDataTable({
                     disabled={rowKey === null}
                     onChange={(e) => toggleSelectedRow(c, e.target.checked)}
                     aria-label={`Selecionar produto ${c["Código"]}`}
-                    className="mt-1 h-3.5 w-3.5 shrink-0 cursor-pointer accent-[var(--accent-blue)] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+                    className="mt-1 h-3.5 w-3.5 shrink-0 cursor-pointer accent-neutral-900 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
                   />
                 </div>
 
                 <div className="mt-3 grid grid-cols-2 gap-1.5 text-xs text-neutral-500">
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide">Código</div>
-                    <div className="mt-1 truncate text-white">{c["Código"] || "-"}</div>
+                  <div className={MOBILE_CELL_CLASS}>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
+                      Código
+                    </div>
+                    <div className="mt-1 truncate font-medium text-neutral-900">
+                      {c["Código"] || "-"}
+                    </div>
                   </div>
 
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide">NCM</div>
-                    <div className="mt-1 truncate text-white">{c["NCM"] || "-"}</div>
+                  <div className={MOBILE_CELL_CLASS}>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
+                      NCM
+                    </div>
+                    <div className="mt-1 truncate font-medium text-neutral-900">
+                      {c["NCM"] || "-"}
+                    </div>
                   </div>
 
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide">Custo Atual</div>
+                  <div className={MOBILE_CELL_CLASS}>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
+                      Custo Atual
+                    </div>
                     <button
                       type="button"
                       onClick={(e) => openCostEditor(c, e, "Custo Atual")}
                       aria-label={`Editar custo atual de ${produto}`}
-                      className="mt-1 block truncate text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+                      className={`mt-1 block truncate ${LINK_CLASS}`}
                     >
                       {moneyOrDash(c["Custo Atual"])}
                     </button>
                   </div>
 
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide">Custo Antigo</div>
+                  <div className={MOBILE_CELL_CLASS}>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
+                      Custo Antigo
+                    </div>
                     <button
                       type="button"
                       onClick={(e) => openCostEditor(c, e, "Custo Antigo")}
                       aria-label={`Editar custo antigo de ${produto}`}
-                      className="mt-1 block truncate text-[var(--accent-blue)] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+                      className={`mt-1 block truncate ${LINK_CLASS}`}
                     >
                       {moneyOrDash(c["Custo Antigo"])}
                     </button>

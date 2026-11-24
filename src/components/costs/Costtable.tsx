@@ -32,6 +32,12 @@ const getCostKey = (row: any) => {
   return String(row?.["Código"] ?? row?.codigo ?? row?.id ?? "").trim();
 };
 
+const LINK_CLASS =
+  "text-neutral-900 font-medium underline decoration-neutral-300 underline-offset-4 transition-colors hover:decoration-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900";
+
+const CHECKBOX_CLASS =
+  "h-3.5 w-3.5 cursor-pointer accent-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900";
+
 function IconBtn({
   onClick,
   variant,
@@ -48,12 +54,13 @@ function IconBtn({
       className={`
         flex h-8 w-8 items-center justify-center
         border border-transparent
-        text-neutral-500
+        text-neutral-400
         transition-colors
-        hover:border-neutral-800 hover:bg-neutral-900
+        hover:border-neutral-200 hover:bg-neutral-100
+        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
         ${
           variant === "edit"
-            ? "hover:text-[var(--accent-blue)]"
+            ? "hover:text-neutral-900"
             : "hover:text-[var(--destructive)]"
         }
       `}
@@ -80,15 +87,15 @@ function CopyBtn({
     <button
       type="button"
       onClick={() => handleCopy(value, copyKey)}
-      className="shrink-0 cursor-pointer opacity-0 transition-opacity group-hover:opacity-100"
+      className="shrink-0 cursor-pointer opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
       aria-label="Copiar"
     >
       <Copy
         weight="regular"
-        className={`h-3 w-3 ${
+        className={`h-3 w-3 transition-colors ${
           copiedId === copyKey
-            ? "text-[var(--accent-blue)]"
-            : "text-neutral-500 hover:text-[var(--accent-blue)]"
+            ? "text-emerald-600"
+            : "text-neutral-400 hover:text-neutral-900"
         }`}
       />
     </button>
@@ -153,19 +160,19 @@ export default function CostDataTable({
             return (
               <div
                 key={`${c["Código"]}-${i}`}
-                className={`border p-3 transition-colors ${
+                className={`border p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors ${
                   isSelected
-                    ? "border-[var(--accent-blue)]/40 bg-[var(--accent-blue-soft)]"
-                    : "border-neutral-800 bg-[#0a0a0a]"
+                    ? "border-neutral-900 bg-neutral-50"
+                    : "border-neutral-200 bg-white"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
                       {c["Marca"] || "-"}
                     </div>
 
-                    <div className="mt-1 flex min-w-0 items-center gap-1.5 text-sm font-medium text-white">
+                    <div className="mt-1 flex min-w-0 items-center gap-1.5 text-sm font-semibold text-neutral-900">
                       <span className="truncate">{c["Produto"] || "-"}</span>
                     </div>
                   </div>
@@ -174,47 +181,47 @@ export default function CostDataTable({
                     type="checkbox"
                     checked={isSelected}
                     onChange={(e) => toggleSelectedRow(c, e.target.checked)}
-                    className="mt-1 h-3.5 w-3.5 shrink-0 cursor-pointer accent-[var(--accent-blue)]"
+                    className={`mt-1 shrink-0 ${CHECKBOX_CLASS}`}
                   />
                 </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-1.5 text-xs text-neutral-400">
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                <div className="mt-3 grid grid-cols-2 gap-1.5 text-xs text-neutral-500">
+                  <div className="min-w-0 rounded-none border border-neutral-200 bg-neutral-50 p-2.5">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
                       Código
                     </div>
-                    <div className="mt-1 truncate text-white">
+                    <div className="mt-1 truncate font-medium text-neutral-900">
                       {c["Código"] || "-"}
                     </div>
                   </div>
 
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                  <div className="min-w-0 rounded-none border border-neutral-200 bg-neutral-50 p-2.5">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
                       NCM
                     </div>
-                    <div className="mt-1 truncate text-white">
+                    <div className="mt-1 truncate font-medium text-neutral-900">
                       {c["NCM"] || "-"}
                     </div>
                   </div>
 
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                  <div className="min-w-0 rounded-none border border-neutral-200 bg-neutral-50 p-2.5">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
                       Custo Atual
                     </div>
                     <button
                       type="button"
                       onClick={(e) => openCostEditor(c, e)}
-                      className="mt-1 truncate text-[var(--accent-blue)] underline-offset-2 hover:underline"
+                      className={`mt-1 block truncate ${LINK_CLASS}`}
                     >
                       R$ {formatBR(c["Custo Atual"])}
                     </button>
                   </div>
 
-                  <div className="min-w-0 border border-neutral-800 bg-[#080808] p-2">
-                    <div className="text-[10px] uppercase tracking-wide text-neutral-600">
+                  <div className="min-w-0 rounded-none border border-neutral-200 bg-neutral-50 p-2.5">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em]">
                       Custo Antigo
                     </div>
-                    <div className="mt-1 truncate text-white">
+                    <div className="mt-1 truncate font-medium text-neutral-900">
                       R$ {formatBR(c["Custo Antigo"])}
                     </div>
                   </div>
@@ -267,10 +274,10 @@ export default function CostDataTable({
                   return (
                     <TableRow
                       key={`${c["Código"]}-${i}`}
-                      className={`group border-b border-neutral-900 transition-colors ${
+                      className={`group border-b border-neutral-100 transition-colors ${
                         isSelected
-                          ? "bg-[var(--accent-blue-soft)] hover:bg-[var(--accent-blue-soft)]"
-                          : "hover:bg-neutral-900/40"
+                          ? "bg-neutral-50 hover:bg-neutral-100"
+                          : "hover:bg-neutral-50/70"
                       }`}
                     >
                       <TableCell className="w-[48px] text-center">
@@ -278,13 +285,13 @@ export default function CostDataTable({
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => toggleSelectedRow(c, e.target.checked)}
-                          className="h-3.5 w-3.5 cursor-pointer accent-[var(--accent-blue)]"
+                          className={CHECKBOX_CLASS}
                         />
                       </TableCell>
 
-                      <TableCell className="w-[140px] text-left font-mono text-[13px] text-neutral-300">
-                        <div className="inline-flex items-center gap-1.5">
-                          <span className="truncate">{c["Código"]}</span>
+                      <TableCell className="w-[140px] text-left font-mono text-[13px] text-neutral-900">
+                        <div className="inline-flex min-w-0 items-center gap-1.5">
+                          <span className="truncate font-medium">{c["Código"]}</span>
                           <CopyBtn
                             value={c["Código"] || ""}
                             copyKey={`codigo-${i}`}
@@ -294,12 +301,12 @@ export default function CostDataTable({
                         </div>
                       </TableCell>
 
-                      <TableCell className="w-[160px] text-left text-[13px] text-neutral-400">
+                      <TableCell className="w-[160px] text-left text-[13px] text-neutral-600">
                         <span className="truncate">{c["Marca"]}</span>
                       </TableCell>
 
-                      <TableCell className="min-w-[280px] text-left text-[13px] text-neutral-300">
-                        <div className="inline-flex max-w-full items-center gap-1.5">
+                      <TableCell className="min-w-[280px] text-left text-[13px] text-neutral-700">
+                        <div className="inline-flex max-w-full min-w-0 items-center gap-1.5">
                           <span className="truncate">{c["Produto"]}</span>
                           <CopyBtn
                             value={c["Produto"] || ""}
@@ -315,7 +322,7 @@ export default function CostDataTable({
                           <button
                             type="button"
                             onClick={(e) => openCostEditor(c, e)}
-                            className="text-[var(--accent-blue)] underline-offset-2 hover:underline"
+                            className={LINK_CLASS}
                           >
                             R$ {formatBR(c["Custo Atual"])}
                           </button>
@@ -333,8 +340,8 @@ export default function CostDataTable({
                         R$ {formatBR(c["Custo Antigo"])}
                       </TableCell>
 
-                      <TableCell className="w-[140px] text-left text-[13px] text-neutral-400">
-                        <div className="inline-flex items-center gap-1.5">
+                      <TableCell className="w-[140px] text-left text-[13px] text-neutral-600">
+                        <div className="inline-flex min-w-0 items-center gap-1.5">
                           <span className="truncate">{c["NCM"]}</span>
                           <CopyBtn
                             value={c["NCM"] || ""}

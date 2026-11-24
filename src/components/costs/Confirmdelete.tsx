@@ -27,7 +27,7 @@ type Props = {
   errorMessage?: string | null;
 };
 
-// Tokens do globals.css (--destructive / --warning / --accent-blue)
+// Tokens do globals.css (--destructive / --warning)
 const SEVERITY_COLOR: Record<Severity, string> = {
   danger: "var(--destructive)",
   warning: "var(--warning)",
@@ -45,12 +45,12 @@ function SectionHeader({
 }) {
   return (
     <div className="mb-2 flex items-center gap-2">
-      <div className="flex h-6 w-6 items-center justify-center border border-neutral-800 text-neutral-500">
+      <div className="flex h-6 w-6 items-center justify-center border border-neutral-200 bg-white text-neutral-500">
         {icon}
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-neutral-300">{title}</p>
-        <p className="text-[10px] text-neutral-600">{description}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-neutral-900">{title}</p>
+        <p className="text-[10px] text-neutral-500">{description}</p>
       </div>
     </div>
   );
@@ -70,12 +70,12 @@ function AlertBox({
     <div
       role="alert"
       aria-live="polite"
-      className="border border-neutral-800 p-3"
+      className="border border-neutral-200 bg-white p-3"
       style={{ borderLeft: `2px solid ${color}` }}
     >
       <div className="flex gap-2">
         <div
-          className="flex h-6 w-6 shrink-0 items-center justify-center border border-neutral-800"
+          className="flex h-6 w-6 shrink-0 items-center justify-center border border-neutral-200 bg-white"
           style={{ color }}
         >
           <Warning className="h-3.5 w-3.5" />
@@ -84,7 +84,7 @@ function AlertBox({
           <strong className="text-[11px] font-semibold uppercase tracking-[0.1em]" style={{ color }}>
             {title}
           </strong>
-          <p className="mt-1.5 text-[11px] text-neutral-400">{message}</p>
+          <p className="mt-1.5 text-[11px] text-neutral-600">{message}</p>
         </div>
       </div>
     </div>
@@ -148,13 +148,13 @@ export default function ConfirmDelete({
         onEscapeKeyDown={(e) => isBusy && e.preventDefault()}
         onInteractOutside={(e) => isBusy && e.preventDefault()}
         data-testid="confirm-delete-dialog"
-        className="bg-[#0a0a0a] border border-neutral-800 shadow-2xl rounded-none w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] max-h-[calc(100dvh-16px)] sm:max-w-md sm:w-[90%] flex flex-col overflow-hidden p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))] [&>button]:hidden"
+        className="bg-white border border-neutral-200 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)] rounded-none w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] max-h-[calc(100dvh-16px)] sm:max-w-md sm:w-[90%] flex flex-col overflow-hidden p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))] [&>button]:hidden"
       >
         {/* Cabeçalho */}
-        <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
+        <DialogHeader className="shrink-0 border-b border-neutral-200 pb-3">
           <div className="flex items-center gap-2">
             <Warning className="h-4 w-4" style={{ color: ACCENT }} />
-            <DialogTitle className="text-base font-semibold text-white sm:text-lg">{title}</DialogTitle>
+            <DialogTitle className="text-base font-semibold text-neutral-900 sm:text-lg">{title}</DialogTitle>
           </div>
           <p className="mt-1 text-[11px] text-neutral-500">{targetLabel}</p>
         </DialogHeader>
@@ -168,7 +168,7 @@ export default function ConfirmDelete({
               title="Resumo da exclusão"
               description="Confira os itens antes de confirmar."
             />
-            <div className="flex items-center gap-2 border border-neutral-800 px-3 py-2">
+            <div className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2">
               <span className="text-[11px] text-neutral-500">Deseja excluir</span>
               <span
                 className="border px-2 py-0.5 text-[11px] font-semibold"
@@ -186,20 +186,20 @@ export default function ConfirmDelete({
           {/* Preview de itens */}
           {previewItems && previewItems.length > 0 && (
             <>
-              <div className="my-5 h-px bg-neutral-900" />
+              <div className="my-5 h-px bg-neutral-200" />
               <div>
                 <SectionHeader
                   icon={<ClipboardText className="h-3.5 w-3.5" />}
                   title="Itens selecionados"
                   description="Amostra dos itens que serão excluídos"
                 />
-                <div className="border border-neutral-800 p-2">
-                  <ul className="space-y-1 text-[11px] text-neutral-400">
+                <div className="border border-neutral-200 bg-white p-2">
+                  <ul className="space-y-1 text-[11px] text-neutral-700">
                     {previewItems.map((name, i) => (
                       <li key={i} className="truncate">• {name}</li>
                     ))}
                     {remainingCount > 0 && (
-                      <li className="text-neutral-600">
+                      <li className="text-neutral-500">
                         e mais {remainingCount} {remainingCount === 1 ? "item" : "itens"}...
                       </li>
                     )}
@@ -210,7 +210,7 @@ export default function ConfirmDelete({
           )}
 
           {/* Alerta de permanência */}
-          <div className="my-5 h-px bg-neutral-900" />
+          <div className="my-5 h-px bg-neutral-200" />
           <AlertBox
             color={ACCENT}
             title="Atenção"
@@ -220,8 +220,8 @@ export default function ConfirmDelete({
           {/* Confirmação extra */}
           {needsExtraConfirm && (
             <>
-              <div className="my-5 h-px bg-neutral-900" />
-              <label className="flex items-start gap-2 text-[13px] text-neutral-300 cursor-pointer">
+              <div className="my-5 h-px bg-neutral-200" />
+              <label className="flex items-start gap-2 text-[13px] text-neutral-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={extraConfirmed}
@@ -237,7 +237,7 @@ export default function ConfirmDelete({
           {/* Erro */}
           {errorMessage && (
             <>
-              <div className="my-5 h-px bg-neutral-900" />
+              <div className="my-5 h-px bg-neutral-200" />
               <AlertBox color="var(--destructive)" title="Erro" message={errorMessage} />
             </>
           )}
@@ -252,7 +252,7 @@ export default function ConfirmDelete({
               e.stopPropagation();
               onOpenChange(false);
             }}
-            className="flex h-11 w-full items-center justify-center rounded-none border border-neutral-800 text-sm text-white transition-colors hover:bg-neutral-900 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto sm:px-6"
+            className="flex h-11 w-full items-center justify-center rounded-none border border-neutral-200 bg-white text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto sm:px-6"
           >
             Cancelar
           </button>
@@ -263,7 +263,7 @@ export default function ConfirmDelete({
               e.stopPropagation();
               void handleConfirm();
             }}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-none border text-sm font-medium text-white transition-[filter] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:brightness-100 sm:h-10 sm:w-auto sm:px-6 cursor-pointer"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-none border text-sm font-semibold text-white transition-[filter] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:brightness-100 sm:h-10 sm:w-auto sm:px-6 cursor-pointer"
             style={{ backgroundColor: ACCENT, borderColor: ACCENT }}
           >
             {isBusy ? (

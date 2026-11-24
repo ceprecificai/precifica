@@ -110,12 +110,12 @@ function SectionHeader({
 }) {
   return (
     <div className="mb-2 flex items-center gap-2">
-      <div className="flex h-6 w-6 items-center justify-center border border-neutral-800 text-neutral-500">
+      <div className="flex h-6 w-6 items-center justify-center border border-neutral-200 bg-white text-neutral-500">
         {icon}
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-neutral-300">{title}</p>
-        <p className="text-[10px] text-neutral-600">{description}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-neutral-900">{title}</p>
+        <p className="text-[10px] text-neutral-500">{description}</p>
       </div>
     </div>
   );
@@ -180,7 +180,7 @@ function AdjustmentField({
           {toggle}
           {existingRate !== undefined && (
             <span
-              className="rounded-none border border-neutral-800 bg-neutral-900 px-1.5 py-0.5 text-[10px] text-neutral-400"
+              className="rounded-none border border-neutral-200 bg-neutral-50 px-1.5 py-0.5 text-[10px] text-neutral-600"
               title="Regra ativa será sobrescrita"
             >
               já possui regra ativa: {existingRate}%
@@ -200,14 +200,14 @@ function AdjustmentField({
           aria-label={label}
           aria-invalid={!!error}
           className={`
-            h-10 w-full rounded-none border bg-transparent
-            pl-9 pr-3 text-sm text-white placeholder:text-neutral-600 outline-none transition-colors
+            h-10 w-full rounded-none border bg-white
+            pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none transition-colors
             focus-visible:ring-1
             disabled:cursor-not-allowed disabled:opacity-40
             ${
               error
-                ? "border-[var(--destructive)]/70 focus:border-[var(--destructive)] focus-visible:ring-[var(--destructive)]"
-                : "border-neutral-800 focus:border-[var(--accent-blue)]/60 focus-visible:ring-[var(--accent-blue)]"
+                ? "border-[var(--destructive)] focus:border-[var(--destructive)] focus-visible:ring-[var(--destructive)]"
+                : "border-neutral-200 focus:border-neutral-900 focus-visible:ring-neutral-900/10"
             }
           `}
         />
@@ -222,7 +222,7 @@ function AdjustmentField({
   );
 }
 
-/** Dropdown genérico (loja/canal/marca) — estilo sistema (versão original, sem portal) */
+/** Dropdown genérico (loja/canal/marca) — estilo claro, sem portal */
 function OptionDropdown({
   options,
   selected,
@@ -289,15 +289,15 @@ function OptionDropdown({
         disabled={isDisabled}
         onClick={() => setOpen((v) => !v)}
         className={`
-          flex h-10 w-full items-center justify-between gap-2 border bg-transparent px-3 text-sm
+          flex h-10 w-full items-center justify-between gap-2 border bg-white px-3 text-sm
           outline-none transition-colors cursor-pointer
-          ${open ? "border-[var(--accent-blue)]/60" : "border-neutral-800 hover:border-neutral-700"}
+          ${open ? "border-neutral-900" : "border-neutral-200 hover:border-neutral-400"}
           disabled:cursor-not-allowed disabled:opacity-50
         `}
       >
         <span className="flex items-center gap-2 truncate">
           {icon}
-          <span className={selected ? "text-white" : "text-neutral-500"}>
+          <span className={selected ? "text-neutral-900" : "text-neutral-500"}>
             {loading ? loadingLabel : selected || placeholder}
           </span>
         </span>
@@ -307,20 +307,20 @@ function OptionDropdown({
       </button>
 
       {open && !isDisabled && (
-        <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-[100] border border-neutral-800 bg-[#0a0a0a] shadow-2xl">
-          <div className="relative border-b border-neutral-900 px-3 pt-2 pb-1">
-            <MagnifyingGlass className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-600" />
+        <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-[100] border border-neutral-200 bg-white shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)]">
+          <div className="relative border-b border-neutral-100 px-3 pt-2 pb-1">
+            <MagnifyingGlass className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
             <input
               ref={inputRef}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-9 w-full bg-transparent pl-9 pr-3 text-xs text-white outline-none placeholder:text-neutral-600"
+              className="h-9 w-full bg-transparent pl-9 pr-3 text-xs text-neutral-900 outline-none placeholder:text-neutral-400"
             />
           </div>
           <div className="max-h-36 overflow-y-auto py-1">
             {filteredOptions.length === 0 && (
-              <div className="px-3 py-2 text-[11px] text-neutral-600">{emptyLabel}</div>
+              <div className="px-3 py-2 text-[11px] text-neutral-500">{emptyLabel}</div>
             )}
             {filteredOptions.map((s) => {
               const selectedFlag = s === selected;
@@ -330,11 +330,13 @@ function OptionDropdown({
                   type="button"
                   onClick={() => handleSelect(s)}
                   className={`flex w-full items-center justify-between px-3 py-2 text-left text-[12.5px] transition-colors cursor-pointer ${
-                    selectedFlag ? "bg-neutral-900 text-white" : "text-neutral-400 hover:bg-neutral-900/70 hover:text-white"
+                    selectedFlag
+                      ? "bg-neutral-100 font-medium text-neutral-900"
+                      : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
                   }`}
                 >
                   <span className="truncate">{s}</span>
-                  {selectedFlag && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--accent-blue)]" />}
+                  {selectedFlag && <Check className="h-3.5 w-3.5 shrink-0 text-neutral-900" />}
                 </button>
               );
             })}
@@ -594,18 +596,18 @@ export default function CostAdjustmentsModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-[#0a0a0a] border border-neutral-800 shadow-2xl w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] max-h-[calc(100dvh-16px)] sm:max-w-md sm:w-[90%] flex flex-col overflow-hidden p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <DialogContent className="bg-white border border-neutral-200 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)] rounded-none w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] max-h-[calc(100dvh-16px)] sm:max-w-md sm:w-[90%] flex flex-col overflow-hidden p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))]">
         {/* Cabeçalho */}
-        <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
+        <DialogHeader className="shrink-0 border-b border-neutral-200 pb-3">
           <div className="flex items-center gap-2">
-            <Percent className="h-4 w-4 text-[var(--accent-blue)]" />
-            <DialogTitle className="text-base font-semibold text-white sm:text-lg">Ajustes em massa</DialogTitle>
+            <Percent className="h-4 w-4 text-neutral-900" />
+            <DialogTitle className="text-base font-semibold text-neutral-900 sm:text-lg">Ajustes em massa</DialogTitle>
           </div>
           <p className="mt-1 text-[11px] text-neutral-500">{targetLabel}</p>
         </DialogHeader>
 
         {/* Seletor de escopo */}
-        <div className="mt-3 flex shrink-0 gap-1 border border-neutral-800 p-1">
+        <div className="mt-3 flex shrink-0 gap-1 border border-neutral-200 bg-neutral-50 p-1">
           {SCOPE_TABS.map((tab) => (
             <button
               key={tab.key}
@@ -614,7 +616,7 @@ export default function CostAdjustmentsModal({
               onClick={() => setScope(tab.key)}
               className={`
               flex flex-1 items-center justify-center gap-1.5 py-1.5 text-[11px] font-medium transition-colors cursor-pointer
-              ${scope === tab.key ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-neutral-300"}
+              ${scope === tab.key ? "bg-white text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.08)]" : "text-neutral-500 hover:text-neutral-900"}
               ${applying ? "cursor-not-allowed opacity-50" : ""}
               `}
             >
@@ -660,8 +662,7 @@ export default function CostAdjustmentsModal({
           </div>
         )}
 
-        {/* Dropdown Marca — movido para fora da área com scroll (mesma lógica de Loja/Canal),
-            evitando o "scroll duplo" e problemas de clique dentro do modal */}
+        {/* Dropdown Marca — fora da área com scroll, mesma lógica de Loja/Canal */}
         {descontoFilled && (
           <div className="mt-3">
             <div className="mb-1.5 flex items-center gap-1.5">
@@ -707,13 +708,13 @@ export default function CostAdjustmentsModal({
                   error={errors[field.key]}
                   previewText={embalagemPreview}
                   toggle={
-                    <div className="flex overflow-hidden border border-neutral-800 text-[10px]">
+                    <div className="flex overflow-hidden border border-neutral-200 text-[10px]">
                       <button
                         type="button"
                         disabled={applying || isChannelScope}
                         onClick={() => setEmbalagemMode("fixed")}
                         className={`px-2 py-0.5 transition-colors cursor-pointer ${
-                          embalagemMode === "fixed" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-neutral-300"
+                          embalagemMode === "fixed" ? "bg-neutral-900 text-white" : "bg-white text-neutral-500 hover:text-neutral-900"
                         }`}
                       >
                         R$
@@ -723,7 +724,7 @@ export default function CostAdjustmentsModal({
                         disabled={applying || isChannelScope}
                         onClick={() => setEmbalagemMode("percent")}
                         className={`px-2 py-0.5 transition-colors cursor-pointer ${
-                          embalagemMode === "percent" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-neutral-300"
+                          embalagemMode === "percent" ? "bg-neutral-900 text-white" : "bg-white text-neutral-500 hover:text-neutral-900"
                         }`}
                       >
                         %
@@ -735,7 +736,7 @@ export default function CostAdjustmentsModal({
             </div>
           </div>
 
-          <div className="my-5 h-px bg-neutral-900" />
+          <div className="my-5 h-px bg-neutral-200" />
 
           {/* Regras */}
           <div>
@@ -772,21 +773,21 @@ export default function CostAdjustmentsModal({
 
           {/* Resumo */}
           {hasAny && !hasErrors && (
-            <div className="mt-5 border border-neutral-800">
+            <div className="mt-5 border border-neutral-200 bg-neutral-50">
               <button
                 type="button"
                 onClick={() => setShowSummary((s) => !s)}
                 className="flex w-full items-center justify-between px-3 py-2 text-left cursor-pointer"
               >
-                <span className="flex items-center gap-2 text-[11px] font-medium text-neutral-300">
+                <span className="flex items-center gap-2 text-[11px] font-medium text-neutral-900">
                   <ClipboardText className="h-3.5 w-3.5 text-neutral-500" />
                   Resumo do que será aplicado
                 </span>
                 <span className="text-[10px] text-neutral-500">{showSummary ? "ocultar" : "ver detalhes"}</span>
               </button>
               {showSummary && (
-                <div className="border-t border-neutral-900 px-3 py-2">
-                  <p className="text-[11px] text-neutral-400">{summaryText}</p>
+                <div className="border-t border-neutral-200 bg-white px-3 py-2">
+                  <p className="text-[11px] text-neutral-700">{summaryText}</p>
                   <ul className="mt-1.5 space-y-0.5 text-[10.5px] text-neutral-500">
                     <li>
                       Escopo:{" "}
@@ -824,7 +825,7 @@ export default function CostAdjustmentsModal({
             type="button"
             disabled={applying}
             onClick={() => handleOpenChange(false)}
-            className="flex h-11 w-full items-center justify-center border border-neutral-800 text-sm text-white transition-colors hover:bg-neutral-900 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto sm:px-6"
+            className="flex h-11 w-full items-center justify-center rounded-none border border-neutral-200 bg-white text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto sm:px-6"
           >
             Cancelar
           </button>
@@ -844,13 +845,13 @@ export default function CostAdjustmentsModal({
                 : undefined
             }
             className={`
-              flex h-11 w-full items-center justify-center gap-2 border text-sm font-medium text-white
+              flex h-11 w-full items-center justify-center gap-2 rounded-none border text-sm font-semibold
               transition-colors sm:h-10 sm:w-auto sm:px-6
               disabled:cursor-not-allowed disabled:opacity-50
               ${
                 canApply
-                  ? "cursor-pointer border-[var(--accent-blue)] bg-[var(--accent-blue)] hover:bg-[var(--accent-blue)]/90"
-                  : "border-neutral-800"
+                  ? "cursor-pointer border-neutral-900 bg-neutral-900 text-white hover:border-neutral-700 hover:bg-neutral-700"
+                  : "border-neutral-200 bg-neutral-100 text-neutral-400"
               }
             `}
           >

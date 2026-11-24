@@ -47,7 +47,7 @@ type Props = {
 const GREEN = "var(--success)";
 const RED = "var(--destructive)";
 const ORANGE = "var(--warning)";
-const INFO = "#a3a3a3";
+const INFO = "#737373";
 
 /** Componente cabeçalho das seções */
 function SectionHeader({
@@ -61,12 +61,12 @@ function SectionHeader({
 }) {
   return (
     <div className="mb-2 flex items-center gap-2">
-      <div className="flex h-6 w-6 items-center justify-center border border-neutral-800 text-neutral-500">
+      <div className="flex h-6 w-6 items-center justify-center border border-neutral-200 bg-white text-neutral-500">
         {icon}
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-neutral-300">{title}</p>
-        <p className="text-[10px] text-neutral-600">{description}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-neutral-900">{title}</p>
+        <p className="text-[10px] text-neutral-500">{description}</p>
       </div>
     </div>
   );
@@ -132,12 +132,12 @@ function AlertBox({
     <div
       role={isError ? "alert" : "status"}
       aria-live="polite"
-      className="border border-neutral-800 p-3"
+      className="border border-neutral-200 bg-white p-3"
       style={{ borderLeft: `2px solid ${color}` }}
     >
       <div className="flex gap-2">
         <div
-          className="flex h-6 w-6 shrink-0 items-center justify-center border border-neutral-800"
+          className="flex h-6 w-6 shrink-0 items-center justify-center border border-neutral-200 bg-white"
           style={{ color }}
         >
           <WarningCircle className="h-3.5 w-3.5" />
@@ -146,7 +146,7 @@ function AlertBox({
           <strong className="text-[11px] font-semibold uppercase tracking-[0.1em]" style={{ color }}>
             {title} ({messages.length})
           </strong>
-          <ul className="mt-1.5 list-disc list-inside space-y-0.5 text-[11px] text-neutral-400">
+          <ul className="mt-1.5 list-disc list-inside space-y-0.5 text-[11px] text-neutral-600">
             {messages.map((msg, i) => (
               <li key={i}>{msg}</li>
             ))}
@@ -166,18 +166,18 @@ function AlertBox({
 function PreviewTable({ preview, keys }: { preview: PreviewRow[]; keys: string[] }) {
   if (keys.length === 0) {
     return (
-      <div className="w-full border border-neutral-800 p-4 text-center text-[11px] text-neutral-600">
+      <div className="w-full border border-neutral-200 bg-white p-4 text-center text-[11px] text-neutral-500">
         Nenhuma coluna detectada no arquivo.
       </div>
     );
   }
 
   return (
-    <div className="w-full border border-neutral-800 overflow-hidden">
+    <div className="w-full overflow-hidden border border-neutral-200 bg-white">
       <div className="h-56 overflow-auto">
-        <table className="w-full min-w-full text-[11.5px] text-neutral-400">
+        <table className="w-full min-w-full text-[11.5px] text-neutral-700">
           <caption className="sr-only">Pré-visualização dos registros a serem importados</caption>
-          <thead className="sticky top-0 z-10 bg-neutral-900">
+          <thead className="sticky top-0 z-10 bg-neutral-50">
             <tr>
               {keys.map((k) => (
                 <th
@@ -193,7 +193,7 @@ function PreviewTable({ preview, keys }: { preview: PreviewRow[]; keys: string[]
           </thead>
           <tbody>
             {preview.map((row, i) => (
-              <tr key={i} className="border-t border-neutral-900 hover:bg-neutral-900/60 transition-colors">
+              <tr key={i} className="border-t border-neutral-100 transition-colors hover:bg-neutral-50">
                 {keys.map((k) => {
                   const raw = row?.[k];
                   const value = formatCellValue(raw);
@@ -235,7 +235,7 @@ function InlineToast({ message, onClose }: { message: InlineMessage; onClose: ()
     <div
       role="status"
       aria-live="polite"
-      className="flex items-start justify-between gap-3 border border-neutral-800 p-3"
+      className="flex items-start justify-between gap-3 border border-neutral-200 bg-white p-3"
       style={{ borderLeft: `2px solid ${color}` }}
     >
       <div>
@@ -250,7 +250,7 @@ function InlineToast({ message, onClose }: { message: InlineMessage; onClose: ()
         type="button"
         onClick={onClose}
         aria-label="Fechar mensagem"
-        className="shrink-0 cursor-pointer text-neutral-600 transition-colors hover:text-neutral-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+        className="shrink-0 cursor-pointer text-neutral-400 transition-colors hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
       >
         <X className="h-3.5 w-3.5" />
       </button>
@@ -376,13 +376,13 @@ export default function ConfirmImportModal({
         onClick={(e) => e.stopPropagation()}
         onEscapeKeyDown={(e) => loading && e.preventDefault()}
         onInteractOutside={(e) => loading && e.preventDefault()}
-        className="bg-[#0a0a0a] border border-neutral-800 shadow-2xl w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] max-h-[calc(100dvh-16px)] sm:max-w-2xl sm:w-[90%] flex flex-col overflow-hidden p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))]"
+        className="bg-white border border-neutral-200 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)] rounded-none w-[calc(100vw-16px)] max-w-[calc(100vw-16px)] max-h-[calc(100dvh-16px)] sm:max-w-2xl sm:w-[90%] flex flex-col overflow-hidden p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))]"
       >
         {/* Cabeçalho */}
-        <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
+        <DialogHeader className="shrink-0 border-b border-neutral-200 pb-3">
           <div className="flex items-center gap-2">
             <FileXls className="h-4 w-4" style={{ color: ACCENT }} />
-            <DialogTitle className="text-base font-semibold text-white sm:text-lg">{titulo}</DialogTitle>
+            <DialogTitle className="text-base font-semibold text-neutral-900 sm:text-lg">{titulo}</DialogTitle>
           </div>
           <p className="mt-1 text-[11px] text-neutral-500">{targetLabel}</p>
         </DialogHeader>
@@ -396,13 +396,13 @@ export default function ConfirmImportModal({
               title="Resumo da importação"
               description={texto}
             />
-            <div className="flex items-center gap-2 border border-neutral-800 px-3 py-2">
+            <div className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2">
               <span className="text-[11px] text-neutral-500">O arquivo contém</span>
-              <span className="border border-[var(--accent-blue)]/40 bg-[var(--accent-blue)]/10 px-2 py-0.5 text-[11px] font-semibold text-[var(--accent-blue)]">
+              <span className="border border-neutral-900 bg-neutral-900 px-2 py-0.5 text-[11px] font-semibold text-white">
                 {count} {count === 1 ? "registro" : "registros"}
               </span>
               {preview.length > 0 && preview.length < count && (
-                <span className="text-[10px] text-neutral-600">(amostra de {preview.length})</span>
+                <span className="text-[10px] text-neutral-500">(amostra de {preview.length})</span>
               )}
             </div>
           </div>
@@ -410,7 +410,7 @@ export default function ConfirmImportModal({
           {/* Alertas */}
           {(hasErrors || hasWarnings) && (
             <>
-              <div className="my-5 h-px bg-neutral-900" />
+              <div className="my-5 h-px bg-neutral-200" />
               <div aria-live="polite" className="space-y-2">
                 {hasErrors && (
                   <AlertBox
@@ -428,7 +428,7 @@ export default function ConfirmImportModal({
           {/* Preview */}
           {preview.length > 0 && (
             <>
-              <div className="my-5 h-px bg-neutral-900" />
+              <div className="my-5 h-px bg-neutral-200" />
               <div>
                 <SectionHeader
                   icon={<FileXls className="h-3.5 w-3.5" />}
@@ -443,7 +443,7 @@ export default function ConfirmImportModal({
           {/* Toast embutido */}
           {inlineMessage && (
             <>
-              <div className="my-5 h-px bg-neutral-900" />
+              <div className="my-5 h-px bg-neutral-200" />
               <InlineToast message={inlineMessage} onClose={() => setInlineMessage(null)} />
             </>
           )}
@@ -458,7 +458,7 @@ export default function ConfirmImportModal({
               e.stopPropagation();
               handleOpenChange(false);
             }}
-            className="flex h-11 w-full items-center justify-center border border-neutral-800 text-sm text-white transition-colors hover:bg-neutral-900 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)] sm:h-10 sm:w-auto sm:px-6"
+            className="flex h-11 w-full items-center justify-center rounded-none border border-neutral-200 bg-white text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900 sm:h-10 sm:w-auto sm:px-6"
           >
             Cancelar
           </button>
@@ -472,13 +472,16 @@ export default function ConfirmImportModal({
             }}
             title={hasErrors ? "Corrija os erros para continuar" : undefined}
             className={`
-              flex h-11 w-full items-center justify-center gap-2 border text-sm font-medium
+              flex h-11 w-full items-center justify-center gap-2 rounded-none border text-sm font-semibold
               transition-[filter,colors] duration-150 sm:h-10 sm:w-auto sm:px-6
-              focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white
+              focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
               disabled:cursor-not-allowed disabled:opacity-50
-              ${canConfirm ? "cursor-pointer text-white hover:brightness-110" : ""}
+              ${
+                canConfirm
+                  ? "cursor-pointer border-neutral-900 bg-neutral-900 text-white hover:border-neutral-700 hover:bg-neutral-700"
+                  : "border-neutral-200 bg-neutral-100 text-neutral-400"
+              }
             `}
-            style={canConfirm ? { backgroundColor: GREEN, borderColor: GREEN } : undefined}
           >
             {loading ? (
               <>

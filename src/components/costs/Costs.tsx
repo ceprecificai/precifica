@@ -135,12 +135,12 @@ export default function Costs() {
   const statusBusy = togglingActive || restoring;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-neutral-200 selection:bg-[#1a8ceb]/20">
+    <div className="min-h-screen bg-neutral-100 text-neutral-900 selection:bg-neutral-900/10">
       <div className="flex min-h-screen flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_280px]">
         {/* Conteúdo principal */}
         <section className="min-w-0">
           {/* Cabeçalho: breadcrumb + mobile actions */}
-          <div className="border-b border-neutral-900 bg-[#050505] px-4 py-4 lg:px-6">
+          <div className="border-b border-neutral-200 bg-white px-4 py-4 lg:px-6">
             <div className="flex items-center justify-between gap-2">
               <CostLocation path={["Dashboard", "Precificação", "Custos"]} />
 
@@ -149,9 +149,9 @@ export default function Costs() {
                   type="button"
                   onClick={() => setOpenFiltersMobile(true)}
                   aria-label="Abrir filtros"
-                  className="flex h-9 items-center gap-2 border border-neutral-800 bg-neutral-950 px-3 text-xs font-medium uppercase tracking-wide text-neutral-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                  className="flex h-9 items-center gap-2 border border-neutral-200 bg-white px-3 text-xs font-medium uppercase tracking-wide text-neutral-700 transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
                 >
-                  <SlidersHorizontal className="h-3.5 w-3.5 text-[#1a8ceb]" />
+                  <SlidersHorizontal className="h-3.5 w-3.5 text-neutral-900" />
                   Filtros
                 </button>
 
@@ -159,9 +159,9 @@ export default function Costs() {
                   type="button"
                   onClick={() => setOpenActionsMobile(true)}
                   aria-label="Abrir ações"
-                  className="flex h-9 items-center gap-2 border border-neutral-800 bg-neutral-950 px-3 text-xs font-medium uppercase tracking-wide text-neutral-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                  className="flex h-9 items-center gap-2 border border-neutral-200 bg-white px-3 text-xs font-medium uppercase tracking-wide text-neutral-700 transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
                 >
-                  <Menu className="h-3.5 w-3.5 text-[#1a8ceb]" />
+                  <Menu className="h-3.5 w-3.5 text-neutral-900" />
                   Ações
                 </button>
               </div>
@@ -185,7 +185,7 @@ export default function Costs() {
             </div>
 
             {/* Card unificado: header + tabela + controls */}
-            <div className="mt-3 overflow-hidden border border-neutral-900 bg-[#0a0a0a] lg:mt-0 lg:border-t-0">
+            <div className="mt-3 overflow-hidden border border-neutral-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] lg:mt-0 lg:border-t-0">
               <CostTable
                 rows={rows}
                 loading={loading}
@@ -218,7 +218,7 @@ export default function Costs() {
                 onRestoreSelected={handleRestoreSelected}
               />
 
-              <div className="border-t border-neutral-900 pb-24 lg:pb-0">
+              <div className="border-t border-neutral-200 pb-24 lg:pb-0">
                 <Controls
                   currentPage={currentPage}
                   totalPages={Math.max(1, Math.ceil(totalItems / itemsPerPage))}
@@ -237,10 +237,10 @@ export default function Costs() {
         </section>
 
         {/* Sidebar direita: Ações */}
-        <aside className="relative hidden lg:block border-l border-neutral-900">
-          <div className="fixed right-0 top-0 h-screen w-[280px] overflow-y-auto bg-[#050505] pt-24">
+        <aside className="relative hidden lg:block border-l border-neutral-200">
+          <div className="fixed right-0 top-0 h-screen w-[280px] overflow-y-auto bg-neutral-100 pt-24">
             <div className="px-5 pb-4">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#1a8ceb]/80">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
                 Ações
               </span>
             </div>
@@ -270,14 +270,14 @@ export default function Costs() {
         type="button"
         onClick={() => setOpenActionsMobile(true)}
         aria-label="Abrir ações"
-        className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center border border-[#1a8ceb]/40 bg-[#0a0a0a] text-[#1a8ceb] active:scale-95 lg:hidden focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+        className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center border border-neutral-900 bg-neutral-900 text-white shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35)] active:scale-95 lg:hidden focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
       >
         <Menu className="h-5 w-5" />
       </button>
 
       {/* Painel de filtros - mobile */}
       {openFiltersMobile && (
-        <div className="fixed inset-0 z-50 bg-black/80 lg:hidden">
+        <div className="fixed inset-0 z-50 bg-neutral-900/40 lg:hidden">
           <button
             type="button"
             className="absolute inset-0 h-full w-full cursor-default"
@@ -285,20 +285,20 @@ export default function Costs() {
             aria-label="Fechar filtros"
           />
 
-          <div className="absolute left-0 top-0 h-full w-[92vw] max-w-[420px] overflow-y-auto border-r border-neutral-900 bg-[#050505] shadow-2xl">
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-neutral-900 bg-[#050505]/95 px-4 py-4">
+          <div className="absolute left-0 top-0 h-full w-[92vw] max-w-[420px] overflow-y-auto border-r border-neutral-200 bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)]">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-neutral-200 bg-white/95 px-4 py-4">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#1a8ceb]/80">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
                   Refinar busca
                 </p>
-                <h2 className="text-lg font-semibold text-white">Filtros</h2>
+                <h2 className="text-lg font-semibold text-neutral-900">Filtros</h2>
               </div>
 
               <button
                 type="button"
                 onClick={() => setOpenFiltersMobile(false)}
                 aria-label="Fechar filtros"
-                className="flex h-9 w-9 items-center justify-center border border-neutral-800 text-white active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                className="flex h-9 w-9 items-center justify-center border border-neutral-200 bg-white text-neutral-900 transition-colors hover:bg-neutral-50 active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
               >
                 <XIcon className="h-4 w-4" />
               </button>
@@ -321,7 +321,7 @@ export default function Costs() {
 
       {/* Painel de ações - mobile */}
       {openActionsMobile && (
-        <div className="fixed inset-0 z-50 bg-black/80 lg:hidden">
+        <div className="fixed inset-0 z-50 bg-neutral-900/40 lg:hidden">
           <button
             type="button"
             className="absolute inset-0 h-full w-full cursor-default"
@@ -329,23 +329,23 @@ export default function Costs() {
             aria-label="Fechar ações"
           />
 
-          <div className="absolute bottom-0 left-0 right-0 max-h-[86dvh] overflow-y-auto border-t border-neutral-900 bg-[#050505] shadow-2xl">
-            <div className="sticky top-0 z-10 border-b border-neutral-900 bg-[#050505]/95 px-4 py-4">
-              <div className="mx-auto mb-3 h-1 w-10 bg-neutral-800" />
+          <div className="absolute bottom-0 left-0 right-0 max-h-[86dvh] overflow-y-auto border-t border-neutral-200 bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)]">
+            <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white/95 px-4 py-4">
+              <div className="mx-auto mb-3 h-1 w-10 bg-neutral-200" />
 
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#1a8ceb]/80">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
                     Central de ações
                   </p>
-                  <h2 className="text-lg font-semibold text-white">Ações</h2>
+                  <h2 className="text-lg font-semibold text-neutral-900">Ações</h2>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setOpenActionsMobile(false)}
                   aria-label="Fechar ações"
-                  className="flex h-9 w-9 items-center justify-center border border-neutral-800 text-white active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]"
+                  className="flex h-9 w-9 items-center justify-center border border-neutral-200 bg-white text-neutral-900 transition-colors hover:bg-neutral-50 active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
                 >
                   <XIcon className="h-4 w-4" />
                 </button>
@@ -466,11 +466,11 @@ export default function Costs() {
       {editing && (
         <FloatingEditor anchorRect={editing.anchorRect} onClose={cancelCostEdit}>
           <div className="w-full">
-            <div className="flex items-center justify-between border-b border-neutral-900 px-2.5 py-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-[#1a8ceb]/80">
+            <div className="flex items-center justify-between border-b border-neutral-200 px-2.5 py-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
                 {editing.field}
               </span>
-              <span className="text-[10px] text-neutral-600">Enter ↵ · Esc</span>
+              <span className="text-[10px] text-neutral-400">Enter ↵ · Esc</span>
             </div>
 
             <div className="p-1.5">
@@ -483,12 +483,12 @@ export default function Costs() {
                     <div className="flex items-center gap-1">
                       <div
                         className={`
-                          flex h-8 flex-1 items-center gap-1.5 border bg-black px-1.5
+                          flex h-8 flex-1 items-center gap-1.5 border bg-white px-1.5
                           transition-colors
                           ${
                             isValid
-                              ? "border-neutral-800 focus-within:border-[#1a8ceb]/60"
-                              : "border-red-500/60 focus-within:border-red-500"
+                              ? "border-neutral-200 focus-within:border-neutral-900"
+                              : "border-red-500 focus-within:border-red-600"
                           }
                         `}
                       >
@@ -502,7 +502,7 @@ export default function Costs() {
                           disabled={savingEdit}
                           aria-label={`Editar ${editing.field}`}
                           aria-invalid={!isValid}
-                          className="h-full flex-1 min-w-0 bg-transparent text-sm text-white outline-none disabled:opacity-50"
+                          className="h-full flex-1 min-w-0 bg-transparent text-sm text-neutral-900 outline-none disabled:opacity-50"
                           value={editing.value}
                           onChange={(e) => {
                             let cleaned = e.target.value.replace(/[^0-9.,]/g, "");
@@ -549,12 +549,12 @@ export default function Costs() {
                           disabled={savingEdit}
                           className="
                             flex h-8 w-8 items-center justify-center
-                            border border-neutral-800 bg-black
-                            text-neutral-400
+                            border border-neutral-200 bg-white
+                            text-neutral-500
                             transition-colors
-                            hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400
+                            hover:border-red-300 hover:bg-red-50 hover:text-red-600
                             disabled:cursor-not-allowed disabled:opacity-40
-                            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-400
+                            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-500
                           "
                         >
                           <XIcon className="h-3.5 w-3.5" />
@@ -568,12 +568,12 @@ export default function Costs() {
                           disabled={savingEdit || !isValid}
                           className="
                             flex h-8 w-8 items-center justify-center
-                            border border-[#1a8ceb]/50 bg-[#1a8ceb]/10
-                            text-[#1a8ceb]
+                            border border-neutral-900 bg-neutral-900
+                            text-white
                             transition-colors
-                            hover:border-[#1a8ceb] hover:bg-[#1a8ceb] hover:text-white
+                            hover:border-neutral-700 hover:bg-neutral-700
                             disabled:cursor-not-allowed disabled:opacity-40
-                            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1a8ceb]
+                            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
                           "
                         >
                           {savingEdit ? (
@@ -589,7 +589,7 @@ export default function Costs() {
                       role="status"
                       aria-live="polite"
                       className={`mt-1.5 pl-0.5 text-[11px] ${
-                        !isValid ? "text-red-400" : "text-neutral-500"
+                        !isValid ? "text-red-600" : "text-neutral-500"
                       }`}
                     >
                       {!isValid

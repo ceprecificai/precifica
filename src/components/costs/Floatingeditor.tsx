@@ -108,7 +108,7 @@ export function FloatingEditor({
     >
       {!isMobile && (
         <div
-          className={`absolute h-2 w-2 rotate-45 border border-[#1a8ceb]/30 bg-[#0a0a0a] transition-opacity duration-150 ${
+          className={`absolute h-2 w-2 rotate-45 border border-neutral-200 bg-white transition-opacity duration-150 ${
             visible ? "opacity-100" : "opacity-0"
           }`}
           style={{
@@ -122,8 +122,8 @@ export function FloatingEditor({
 
       <div
         className={`
-          border border-[#1a8ceb]/30 bg-[#0a0a0a]
-          shadow-[0_8px_30px_rgba(0,0,0,0.6)]
+          border border-neutral-200 bg-white
+          shadow-[0_8px_30px_rgba(0,0,0,0.08)]
           overflow-hidden
           transition-all duration-150 ease-out origin-top
           ${visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-[-4px]"}

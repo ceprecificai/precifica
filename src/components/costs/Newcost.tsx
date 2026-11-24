@@ -57,7 +57,7 @@ const ERROR_TEXT_CLASS = "text-[11px] text-[var(--destructive)]";
 const ERROR_BORDER_CLASS = "!border-[var(--destructive)]";
 
 const FIELD_CLASS =
-  "h-10 border-neutral-800 bg-transparent text-white transition-colors focus-visible:border-[var(--accent-blue)] focus-visible:ring-1 focus-visible:ring-[var(--accent-blue-soft)] focus-visible:ring-offset-0";
+  "h-10 rounded-none border-neutral-200 bg-white text-neutral-900 placeholder:text-neutral-400 transition-colors focus-visible:border-neutral-900 focus-visible:ring-1 focus-visible:ring-neutral-900/10 focus-visible:ring-offset-0";
 
 const LABEL_CLASS = "text-xs font-medium text-neutral-500";
 
@@ -119,14 +119,14 @@ const BrandDropdown: React.FC<BrandDropdownProps> = ({
   return (
     <div
       ref={listaRef}
-      className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto rounded-md border border-neutral-800 bg-[#0a0a0a] p-1 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150"
+      className="absolute z-50 mt-1 max-h-40 w-full overflow-y-auto rounded-none border border-neutral-200 bg-white p-1 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)] animate-in fade-in-0 zoom-in-95 duration-150"
     >
       {loading ? (
         <div className="space-y-1 p-1">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="h-6 w-full animate-pulse rounded bg-neutral-800/60"
+              className="h-6 w-full animate-pulse rounded-none bg-neutral-100"
             />
           ))}
         </div>
@@ -136,10 +136,10 @@ const BrandDropdown: React.FC<BrandDropdownProps> = ({
         sugestoes.map((s, i) => (
           <div
             key={`${s.marca}-${i}`}
-            className={`flex cursor-pointer items-center justify-between rounded px-2 py-2 text-xs text-white transition-colors ${
+            className={`flex cursor-pointer items-center justify-between rounded-none px-2 py-2 text-xs text-neutral-900 transition-colors ${
               i === indiceSelecionado
-                ? "bg-[var(--accent-blue)]/20"
-                : "hover:bg-[var(--accent-blue)]/10"
+                ? "bg-neutral-100"
+                : "hover:bg-neutral-50"
             }`}
             onMouseDown={(e) => {
               e.preventDefault();
@@ -653,10 +653,10 @@ export default function NewCost({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="
-          bg-[#0a0a0a]
-          border border-neutral-800
-          rounded-lg
-          shadow-2xl
+          bg-white
+          border border-neutral-200
+          rounded-none
+          shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)]
 
           w-[calc(100vw-16px)]
           max-w-[calc(100vw-16px)]
@@ -673,11 +673,11 @@ export default function NewCost({
           pb-[calc(1rem+env(safe-area-inset-bottom))]
         "
       >
-        <DialogHeader className="shrink-0 border-b border-neutral-900 pb-3">
+        <DialogHeader className="shrink-0 border-b border-neutral-200 pb-3">
           <div className="flex items-center gap-2">
-            <CurrencyDollar size={16} weight="bold" className={ACCENT_CLASS} />
+            <CurrencyDollar size={16} weight="bold" className="text-neutral-900" />
 
-            <DialogTitle className="text-base font-semibold text-white sm:text-lg">
+            <DialogTitle className="text-base font-semibold tracking-tight text-neutral-900 sm:text-lg">
               {mode === "create" ? "Novo Custo" : "Editar Custo"}
             </DialogTitle>
           </div>
@@ -701,7 +701,7 @@ export default function NewCost({
                 disabled={mode === "edit"}
                 aria-invalid={Boolean(errors.code)}
                 aria-describedby={errors.code ? "codigo-error" : undefined}
-                className={`${FIELD_CLASS} disabled:cursor-not-allowed disabled:opacity-60 ${
+                className={`${FIELD_CLASS} disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:opacity-60 ${
                   errors.code ? ERROR_BORDER_CLASS : ""
                 }`}
                 placeholder="Ex: 5535 ou TN 5AM"
@@ -875,11 +875,11 @@ export default function NewCost({
             onClick={() => onOpenChange(false)}
             className="
               flex h-10 sm:h-9 w-full sm:w-auto sm:px-6 items-center justify-center
-              rounded-md border border-neutral-800
-              text-sm font-semibold text-white
+              rounded-none border border-neutral-200 bg-white
+              text-sm font-semibold text-neutral-900
               transition-colors
               cursor-pointer
-              hover:bg-neutral-900
+              hover:bg-neutral-50
               disabled:cursor-not-allowed disabled:opacity-50
             "
           >
@@ -895,11 +895,11 @@ export default function NewCost({
             }}
             className={`
               flex h-10 sm:h-9 w-full sm:w-auto sm:px-6 items-center justify-center gap-2
-              rounded-md border ${ACCENT_BORDER_CLASS} ${ACCENT_BG_CLASS}
-              text-sm font-semibold text-black
+              rounded-none border border-neutral-900 bg-neutral-900
+              text-sm font-semibold text-white
               transition-colors
               cursor-pointer
-              hover:border-[#3b9df0] hover:bg-[#3b9df0]
+              hover:border-neutral-700 hover:bg-neutral-700
               disabled:cursor-not-allowed disabled:opacity-50
             `}
           >

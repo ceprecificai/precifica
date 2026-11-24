@@ -21,10 +21,10 @@ export default function CostLocation({ path }: Props) {
         rest.length > 0 &&
         rest.map((item, i) => (
           <React.Fragment key={`${item}-${i}`}>
-            <span className="cursor-default text-neutral-500 transition-colors hover:text-neutral-300">
+            <span className="cursor-default text-neutral-500 transition-colors hover:text-neutral-900">
               {item}
             </span>
-            <CaretRight className="h-3 w-3 text-neutral-700" aria-hidden="true" />
+            <CaretRight className="h-3 w-3 text-neutral-400" aria-hidden="true" />
           </React.Fragment>
         ))}
 
@@ -36,9 +36,9 @@ export default function CostLocation({ path }: Props) {
           title={expanded ? "Ocultar caminho" : "Mostrar caminho completo"}
           className="
             flex h-5 w-5 items-center justify-center
-            text-neutral-600 transition-colors
-            hover:text-[var(--accent-blue)]
-            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+            text-neutral-400 transition-colors
+            hover:text-neutral-900
+            focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
           "
         >
           <DotsThree className="h-3.5 w-3.5" weight="bold" />
@@ -46,10 +46,10 @@ export default function CostLocation({ path }: Props) {
       )}
 
       {rest.length > 0 && (
-        <CaretRight className="h-3 w-3 text-neutral-700" aria-hidden="true" />
+        <CaretRight className="h-3 w-3 text-neutral-400" aria-hidden="true" />
       )}
 
-      <span className="font-medium text-white">{last}</span>
+      <span className="font-medium text-neutral-900">{last}</span>
     </div>
   );
 }

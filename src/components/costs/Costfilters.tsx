@@ -49,21 +49,25 @@ function FieldLabel({ label, htmlFor }: { label: string; htmlFor?: string }) {
 const inputClass = `
   h-10 w-full
   rounded-none
-  border border-neutral-800
-  bg-[#0a0a0a]
-  text-sm text-white
-  placeholder:text-neutral-500
-  focus-visible:border-[var(--accent-blue)]/60
-  focus-visible:ring-1 focus-visible:ring-[var(--accent-blue-soft)]
+  border border-neutral-200
+  bg-white
+  text-sm text-neutral-900
+  shadow-none
+  placeholder:text-neutral-400
+  transition-colors
+  focus-visible:border-neutral-900
+  focus-visible:ring-1 focus-visible:ring-neutral-900/10
+  focus-visible:ring-offset-0
 `;
 
 const selectTriggerClass = `
   h-10 w-full cursor-pointer rounded-none
-  border border-neutral-800 bg-[#0a0a0a]
-  px-3 text-left text-sm text-white
+  border border-neutral-200 bg-white
+  px-3 text-left text-sm text-neutral-900
   outline-none transition-colors
-  focus:border-[var(--accent-blue)]/60 focus:ring-0
-  focus-visible:ring-1 focus-visible:ring-white/40
+  hover:border-neutral-400
+  focus:border-neutral-900 focus:ring-0
+  focus-visible:ring-1 focus-visible:ring-neutral-900/10
 `;
 
 const norm = (v: string) => v.trim().toLocaleLowerCase("pt-BR");
@@ -165,9 +169,9 @@ function BrandMultiSelect({
         }}
         className={`
           flex min-h-10 w-full cursor-text flex-wrap items-center gap-1.5
-          rounded-none border bg-[#0a0a0a] px-2 py-1.5
+          rounded-none border bg-white px-2 py-1.5
           transition-colors
-          ${open ? "border-[var(--accent-blue)]/60" : "border-neutral-800 hover:border-neutral-700"}
+          ${open ? "border-neutral-900" : "border-neutral-200 hover:border-neutral-400"}
         `}
       >
         {selectedBrands.map((brand) => (
@@ -181,8 +185,8 @@ function BrandMultiSelect({
             title={`Remover ${brand}`}
             aria-label={`Remover ${brand}`}
             className="
-              flex cursor-pointer items-center gap-1 border border-[var(--accent-blue)]/40
-              bg-[var(--accent-blue)]/10 px-2 py-0.5 text-[12px] text-[var(--accent-blue)] transition-colors hover:bg-[var(--accent-blue)]/20
+              flex cursor-pointer items-center gap-1 border border-neutral-300
+              bg-neutral-100 px-2 py-0.5 text-[12px] text-neutral-900 transition-colors hover:bg-neutral-200
             "
           >
             {brand}
@@ -197,7 +201,7 @@ function BrandMultiSelect({
           onFocus={() => setOpen(true)}
           onKeyDown={handleInputKeyDown}
           placeholder={selectedBrands.length === 0 ? "Ex: Liverpool, SKP" : ""}
-          className="min-w-[80px] flex-1 bg-transparent text-sm text-white placeholder:text-neutral-500 outline-none"
+          className="min-w-[80px] flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
         />
 
         {selectedBrands.length > 0 && (
@@ -208,14 +212,14 @@ function BrandMultiSelect({
               clearAllBrands();
             }}
             aria-label="Limpar marcas"
-            className="shrink-0 cursor-pointer text-neutral-500 transition-colors hover:text-white"
+            className="shrink-0 cursor-pointer text-neutral-400 transition-colors hover:text-neutral-900"
           >
             <X className="h-3.5 w-3.5" />
           </button>
         )}
 
         <CaretDown
-          className={`h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform ${
+          className={`h-3.5 w-3.5 shrink-0 text-neutral-400 transition-transform ${
             open ? "rotate-180" : ""
           }`}
         />
@@ -224,7 +228,7 @@ function BrandMultiSelect({
       {open && (
         <div
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 max-h-56 overflow-y-auto border border-neutral-800 bg-[#0d0d0d] shadow-2xl"
+          className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 max-h-56 overflow-y-auto border border-neutral-200 bg-white shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)]"
         >
           {visibleBrands.length > 0 ? (
             visibleBrands.map((brand) => {
@@ -242,17 +246,17 @@ function BrandMultiSelect({
                   }}
                   className={`
                     flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2 text-left text-[13px]
-                    transition-colors hover:bg-neutral-900
-                    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
-                    ${checked ? "text-[var(--accent-blue)]" : "text-neutral-300"}
+                    transition-colors hover:bg-neutral-50
+                    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
+                    ${checked ? "font-medium text-neutral-900" : "text-neutral-600"}
                   `}
                 >
                   <span className="flex items-center gap-2 truncate">
                     <span
                       className={`h-3 w-3 shrink-0 border ${
                         checked
-                          ? "border-[var(--accent-blue)] bg-[var(--accent-blue)]"
-                          : "border-neutral-700"
+                          ? "border-neutral-900 bg-neutral-900"
+                          : "border-neutral-300"
                       }`}
                     />
                     <span className="truncate">{brand}</span>
@@ -320,24 +324,24 @@ export default function CostFilters({
   const itemClass = (isActive: boolean) => `
     relative cursor-pointer rounded-none py-2 pl-3 pr-3 text-sm
     transition-colors
-    focus:bg-neutral-900
+    focus:bg-neutral-100
     data-[state=checked]:font-medium
     [&_svg]:hidden
     ${
       isActive
-        ? "text-[var(--accent-blue)] data-[state=checked]:text-[var(--accent-blue)]"
-        : "text-white/70 hover:text-[var(--accent-blue)]"
+        ? "font-medium text-neutral-900 data-[state=checked]:text-neutral-900"
+        : "text-neutral-600 hover:text-neutral-900"
     }
   `;
 
   const selectContentClass = `
     min-w-[180px] rounded-none
-    border border-neutral-800 bg-[#0d0d0d]
-    p-1 shadow-2xl
+    border border-neutral-200 bg-white
+    p-1 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)]
   `;
 
   return (
-    <div className="border border-neutral-900 bg-[#0a0a0a]">
+    <div className="border border-neutral-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <form ref={formRef} onSubmit={handleSubmit} className="w-full px-4 py-4">
         <div className="flex flex-col gap-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -430,8 +434,8 @@ export default function CostFilters({
                 className="
                   flex h-9 cursor-pointer items-center gap-1.5 px-3
                   text-[13px] text-neutral-500
-                  transition-colors hover:text-white
-                  focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+                  transition-colors hover:text-neutral-900
+                  focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
                   disabled:cursor-not-allowed disabled:opacity-50
                 "
               >
@@ -447,11 +451,11 @@ export default function CostFilters({
               className="
                 flex h-9 min-w-[120px] cursor-pointer items-center justify-center gap-2
                 rounded-none
-                border border-[var(--accent-blue)] bg-[var(--accent-blue)]
+                border border-neutral-900 bg-neutral-900
                 px-5 text-sm font-medium text-white
                 transition-colors duration-150
-                hover:bg-[var(--accent-blue)]/90 hover:border-[var(--accent-blue)]/90
-                focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white
+                hover:bg-neutral-700 hover:border-neutral-700
+                focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900 focus-visible:ring-offset-2
                 active:scale-[0.98]
                 disabled:cursor-not-allowed disabled:opacity-50
               "

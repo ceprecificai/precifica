@@ -93,10 +93,10 @@ export function Controls({
   const isLastPage = safeCurrentPage === safeTotalPages || safeTotalPages <= 1;
 
   const navBtnClass = `
-    flex h-8 w-8 cursor-pointer items-center justify-center border border-neutral-800
-    text-neutral-400 transition-colors
-    hover:border-[var(--accent-blue)]/40 hover:text-white
-    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]
+    flex h-8 w-8 cursor-pointer items-center justify-center border border-neutral-200 bg-white
+    text-neutral-600 transition-colors
+    hover:border-neutral-900 hover:text-neutral-900
+    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900
     disabled:cursor-not-allowed disabled:opacity-30
   `;
 
@@ -105,13 +105,13 @@ export function Controls({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-[13px] text-neutral-500">
-            <span className="font-medium text-white">{startItem}</span>–
-            <span className="font-medium text-white">{endItem}</span> de{" "}
-            <span className="font-medium text-white">{safeTotalItems}</span>
+            <span className="font-medium text-neutral-900">{startItem}</span>–
+            <span className="font-medium text-neutral-900">{endItem}</span> de{" "}
+            <span className="font-medium text-neutral-900">{safeTotalItems}</span>
           </p>
 
           {selectedCount > 0 && (
-            <span className="border border-[var(--accent-blue)]/30 bg-[var(--accent-blue)]/10 px-2 py-0.5 text-xs font-medium text-[var(--accent-blue)]">
+            <span className="border border-neutral-900 bg-neutral-900 px-2 py-0.5 text-xs font-medium text-white">
               {selectedCount} selecionado{selectedCount > 1 ? "s" : ""}
             </span>
           )}
@@ -124,7 +124,7 @@ export function Controls({
             <Select value={String(safeItemsPerPage)} onValueChange={handleItemsPerPageChange}>
               <SelectTrigger
                 aria-label="Itens por página"
-                className="h-8 w-[64px] cursor-pointer rounded-none border border-neutral-800 bg-[#050505] text-sm text-white focus:border-[var(--accent-blue)]/50 focus:ring-0 focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+                className="h-8 w-[64px] cursor-pointer rounded-none border border-neutral-200 bg-white text-sm text-neutral-900 focus:border-neutral-900 focus:ring-0 focus-visible:ring-1 focus-visible:ring-neutral-900"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -132,7 +132,7 @@ export function Controls({
               <SelectContent
                 position="popper"
                 sideOffset={4}
-                className="min-w-[80px] rounded-none border border-neutral-800 bg-[#0d0d0d] p-1 shadow-2xl"
+                className="min-w-[80px] rounded-none border border-neutral-200 bg-white p-1 shadow-lg"
               >
                 {PAGE_SIZE_OPTIONS.map((num) => {
                   const isActive = safeItemsPerPage === num;
@@ -144,13 +144,13 @@ export function Controls({
                       className={`
                         relative cursor-pointer rounded-none py-2 pl-3 pr-3 text-sm
                         transition-colors
-                        focus:bg-neutral-900
-                        data-[state=checked]:font-medium
+                        focus:bg-neutral-100
+                        data-[state=checked]:font-semibold
                         [&_svg]:hidden
                         ${
                           isActive
-                            ? "text-[var(--accent-blue)] data-[state=checked]:text-[var(--accent-blue)]"
-                            : "text-white/70 hover:text-[var(--accent-blue)]"
+                            ? "text-neutral-900 data-[state=checked]:text-neutral-900"
+                            : "text-neutral-500 hover:text-neutral-900"
                         }
                       `}
                     >
@@ -192,7 +192,7 @@ export function Controls({
                 onKeyDown={handlePageInputKeyDown}
                 onBlur={handlePageInputBlur}
                 aria-label="Número da página"
-                className="h-8 w-11 border border-neutral-800 bg-[#050505] text-center text-sm text-white outline-none focus:border-white/50 focus-visible:ring-1 focus-visible:ring-[var(--accent-blue)]"
+                className="h-8 w-11 border border-neutral-200 bg-white text-center text-sm text-neutral-900 outline-none focus:border-neutral-900 focus-visible:ring-1 focus-visible:ring-neutral-900"
               />
               <span className="text-[13px] text-neutral-500">/ {safeTotalPages}</span>
             </div>
