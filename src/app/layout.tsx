@@ -11,9 +11,8 @@ export const metadata: Metadata = {
   description: "Precificação de produtos",
   authors: [{ name: "Precifica" }],
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    icon: [{ url: "/favicon.svg?v=2", type: "image/svg+xml" }],
   },
-  manifest: "/site.webmanifest",
   openGraph: {
     title: "Precifica",
     description: "Precificação de produtos",
