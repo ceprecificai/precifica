@@ -282,6 +282,13 @@ async function fetchCostsPage(
   pageSize: number,
   signal?: AbortSignal
 ): Promise<FetchResult> {
+  // Sem sessão, o RLS (role authenticated) devolve [] silenciosamente.
+  // Falhar aqui deixa o motivo visível em vez de uma tabela vazia.
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !sessionData.session) {
+    throw new Error("Sessão não encontrada. Faça login novamente para ver os custos.");
+  }
+
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
