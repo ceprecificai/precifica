@@ -171,6 +171,30 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
     }
   };
 
+  // Enter:
+  // - Com sugestões abertas: delega ao pai (seleciona a sugestão).
+  // - Sem sugestões abertas: adiciona o produto à composição.
+  // Demais teclas (setas, Tab, Esc) seguem para o pai.
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") {
+      handleProdutoSugestoesKeys?.(e);
+      return;
+    }
+
+    const sugestoesAbertas = produtoSugestaoAtiva && sugestoesProduto.length > 0;
+
+    if (sugestoesAbertas) {
+      handleProdutoSugestoesKeys?.(e);
+      return;
+    }
+
+    e.preventDefault();
+
+    if (canAdd) {
+      onAdicionarProduto?.();
+    }
+  };
+
   const handleSelect = (
     codigoSelecionado: string,
     custoSelecionado: number,
@@ -214,7 +238,7 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
               value={codigo}
               onChange={(e) => handleCodigoChange(e.target.value)}
               onFocus={handleCodigoFocus}
-              onKeyDown={handleProdutoSugestoesKeys}
+              onKeyDown={handleKeyDown}
               placeholder="Ex: TN 5AM"
               className={INPUT_CLASS}
             />
@@ -261,7 +285,7 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
               value={descricao}
               onChange={(e) => handleDescricaoChange(e.target.value)}
               onFocus={handleDescricaoFocus}
-              onKeyDown={handleProdutoSugestoesKeys}
+              onKeyDown={handleKeyDown}
               placeholder="Ex: TENNESSEE 5A MARFIM MADEIRA"
               className={INPUT_CLASS}
             />
