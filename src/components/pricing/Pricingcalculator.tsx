@@ -45,8 +45,7 @@ type Empresa = "pikot" | "sobaquetas";
 const EMPRESA_STORAGE_KEY = "pricing.empresaSelecionada.v1";
 
 // Termos com menos de 2 caracteres geram queries muito genéricas
-// (batem em quase toda a tabela) — sem ganho de UX real, só carga
-// desnecessária no banco. Abaixo disso, não busca.
+// (batem em quase toda a tabela). Abaixo disso, não busca.
 const MIN_CHARS_BUSCA = 2;
 
 // Cache de buscas recentes: evita repetir a mesma query se o usuário
@@ -150,16 +149,9 @@ function setCached(cacheKey: string, data: Sugestao[]) {
 }
 
 /**
- * Busca otimizada via RPC `search_costs_column` (Postgres function
- * com índice trigram/GIN — ver migration `20260918_optimize_costs_search.sql`).
- * -----------------------------------------------------------------
- * Substitui o antigo esquema de 2 estágios (prefixo + fallback
- * "contém"), que fazia até 2 round-trips ao banco por busca. Agora,
- * com índice trigram, uma única chamada cobre prefixo, "contém" e
- * ranking por similaridade (útil até para erro de digitação).
- *
- * Resultado é cacheado por até `CACHE_TTL_MS` para evitar reconsultas
- * quando o usuário digita/apaga e volta ao mesmo termo rapidamente.
+ * Busca de custos na tabela `public.costs`, a mesma usada pela tela de custos.
+ * Retorna no formato bruto das linhas (code, product, mark, current_cost).
+ * Resultado é cacheado por até `CACHE_TTL_MS`.
  */
 async function buscarPorColuna(
   coluna: "code" | "product" | "mark",
@@ -224,6 +216,11 @@ export default function PricingCalculatorModern() {
   } = usePrecificacao();
 
   const [produtoMarca, setProdutoMarca] = useState("");
+
+  // Marca ativa sempre derivada da composição atual.
+  useEffect(() => {
+    setProdutoMarca(resolveMarcaAtiva(composicao));
+  }, [composicao]);
 
   // =====================
   // Empresa/loja ativa (Pikot Shop / Sóbaquetas).
@@ -370,9 +367,6 @@ export default function PricingCalculatorModern() {
 
     setComposicao([...composicao, novoItem]);
 
-    const marcaAtiva = resolveMarcaAtiva([...composicao, novoItem]);
-    setProdutoMarca(marcaAtiva);
-
     setCodigo("");
     setDescricao("");
     setProdutoSelecionado(null);
@@ -410,23 +404,15 @@ export default function PricingCalculatorModern() {
   const [campoAtivo, setCampoAtivo] = useState<number | null>(null);
   const [indiceSelecionado, setIndiceSelecionado] = useState<number>(-1);
 
-  // Refs voláteis usadas dentro dos listeners de "clicar fora" — evita
-  // recriar os listeners (removeEventListener + addEventListener) a
-  // cada tecla digitada, já que `sugestoes` muda em toda busca.
-  const sugestoesRef = useRef(sugestoes);
-  sugestoesRef.current = sugestoes;
-
   const listaRef = useRef<HTMLDivElement>(null);
   const inputRefs = useRef<HTMLInputElement[][]>([]);
   const acrescimosRefs = useRef<HTMLInputElement[]>([]);
 
   // AbortControllers para cancelar requisições de busca em voo quando
-  // uma nova busca é disparada (digitação rápida) — evita que N
-  // requisições completas rodem em paralelo no banco.
+  // uma nova busca é disparada (digitação rápida).
   const buscaAbortControllerRef = useRef<AbortController | null>(null);
 
-  // Refs de navegação por canal — Record<ChannelKey, ref>, substitui
-  // os 6 useRef individuais.
+  // Refs de navegação por canal — Record<ChannelKey, ref>.
   const channelRefsMapRef = useRef<Record<ChannelKey, HTMLInputElement[]>>(
     Object.fromEntries(CHANNELS.map((c) => [c.key, []])) as Record<
       ChannelKey,
@@ -500,7 +486,7 @@ export default function PricingCalculatorModern() {
     precos,
     resetAll: resetChannelsAll,
     resetManualState,
-    refetchDbRules, // Permite recarregar as regras de banco (flat/tiered/brand) sem reload de página, após o modal de regras salvar algo.
+    refetchDbRules,
   } = useChannelPricing(produtoMarca, calcularPreco);
 
   // =====================
@@ -591,12 +577,13 @@ export default function PricingCalculatorModern() {
   }, [precos, calculos.mlClassico.frete, calculos.mlPremium.frete, setAcrescimos]);
 
   // =====================
-  // Fechar sugestões da composição ao clicar fora
+  // Fechar sugestões da composição ao clicar fora.
+  // Apenas fecha a lista: nunca grava automaticamente a primeira sugestão.
   // =====================
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (campoAtivo === null) return;
+    if (campoAtivo === null) return;
 
+    const handleClickOutside = (e: MouseEvent) => {
       const listaEl = listaRef.current;
       const inputEl = inputRefs.current[campoAtivo]?.[0];
       const target = e.target as Node;
@@ -604,33 +591,16 @@ export default function PricingCalculatorModern() {
       const clickDentroLista = Boolean(listaEl && listaEl.contains(target));
       const clickNoInputAtivo = Boolean(inputEl && inputEl.contains(target));
 
-      if (!clickDentroLista && !clickNoInputAtivo) {
-        const sugestoesAtuais = sugestoesRef.current;
+      if (clickDentroLista || clickNoInputAtivo) return;
 
-        if (sugestoesAtuais.length > 0) {
-          const sugestao = sugestoesAtuais[0];
-
-          confirmarSugestaoPrimeira(
-            campoAtivo,
-            sugestao.codigo,
-            sugestao.custo,
-            sugestao.produto,
-            sugestao.marca
-          );
-        }
-
-        setSugestoes([]);
-        setCampoAtivo(null);
-        setIndiceSelecionado(-1);
-        inputEl?.blur();
-      }
+      setSugestoes([]);
+      setCampoAtivo(null);
+      setIndiceSelecionado(-1);
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campoAtivo]);
-
 
   useEffect(() => {
     if (listaRef.current && indiceSelecionado >= 0) {
@@ -641,13 +611,10 @@ export default function PricingCalculatorModern() {
     }
   }, [indiceSelecionado]);
 
-
   const ultimaBuscaRef = useRef("");
 
   /**
-   * Busca de sugestões da COMPOSIÇÃO — via RPC `search_costs_column`
-   * (índice trigram/GIN, ranking por similaridade feito no banco).
-   * Já retorna ordenado, sem necessidade de reordenar no client.
+   * Busca de sugestões da COMPOSIÇÃO — consulta `public.costs` por código.
    */
   const buscarSugestoes = async (termo: string, idx: number) => {
     const raw = termo.trim();
@@ -677,12 +644,9 @@ export default function PricingCalculatorModern() {
     setIndiceSelecionado(0);
   };
 
-  // Debounce de 60ms: com busca via índice trigram a query é rápida
-  // o suficiente para não precisar de tanta espera.
   const buscarSugestoesDebounced = useRef(
     debounce(buscarSugestoes, 60)
   ).current;
-
 
   // Cancela debounces pendentes e requisições em voo ao desmontar o
   // componente — evita setState em componente desmontado.
@@ -694,6 +658,11 @@ export default function PricingCalculatorModern() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Grava o item selecionado na composição.
+   * Usa a forma funcional do setState para não depender de um
+   * `composicao` capturado em closure (que pode estar desatualizado).
+   */
   const confirmarSugestaoPrimeira = (
     idx: number,
     codigo: string,
@@ -701,22 +670,21 @@ export default function PricingCalculatorModern() {
     produto?: string,
     marca?: string
   ) => {
-    const novo = [...composicao];
+    setComposicao((prev: any[]) => {
+      const novo = [...prev];
 
-    novo[idx] = {
-      ...novo[idx],
-      codigo,
-      produto: produto || novo[idx]?.produto || "",
-      descricao: produto || novo[idx]?.descricao || "",
-      custo: (Number(custo) || 0).toFixed(2),
-      marca: marca !== undefined ? marca : novo[idx]?.marca || "",
-      quantidade: novo[idx]?.quantidade || "1",
-    };
+      novo[idx] = {
+        ...novo[idx],
+        codigo,
+        produto: produto || novo[idx]?.produto || "",
+        descricao: produto || novo[idx]?.descricao || "",
+        custo: (Number(custo) || 0).toFixed(2),
+        marca: marca !== undefined ? marca : novo[idx]?.marca || "",
+        quantidade: novo[idx]?.quantidade || "1",
+      };
 
-    setComposicao(novo);
-
-    const marcaAtiva = resolveMarcaAtiva(novo);
-    setProdutoMarca(marcaAtiva);
+      return novo;
+    });
   };
 
   const selecionarSugestao = (
@@ -736,7 +704,6 @@ export default function PricingCalculatorModern() {
       inputRefs.current[idx]?.[0]?.focus();
     }, 50);
   };
-
 
   const handleSugestoesKeys = (
     e: React.KeyboardEvent<HTMLInputElement>,
@@ -758,6 +725,7 @@ export default function PricingCalculatorModern() {
       e.preventDefault();
       const index = indiceSelecionado >= 0 ? indiceSelecionado : 0;
       const sugestao = sugestoes[index];
+      if (!sugestao) return;
 
       selecionarSugestao(
         sugestao.codigo,
@@ -770,6 +738,7 @@ export default function PricingCalculatorModern() {
       e.preventDefault();
       const index = indiceSelecionado >= 0 ? indiceSelecionado : 0;
       const sugestao = sugestoes[index];
+      if (!sugestao) return;
 
       confirmarSugestaoPrimeira(
         idx,
@@ -789,7 +758,6 @@ export default function PricingCalculatorModern() {
       setIndiceSelecionado(-1);
     }
   };
-
 
   const handleGridNav = (
     e: React.KeyboardEvent<HTMLInputElement>,
